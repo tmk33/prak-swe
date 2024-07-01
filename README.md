@@ -1,3 +1,8 @@
+It is built using:
+
+Express.js: A minimalist and flexible web framework for Node.js.  
+Node.js: A server-side JavaScript runtime environment.  
+PostgreSQL: A powerful and scalable open-source relational database management system.
 
 Installation and Setup
 1. Prerequisites:
