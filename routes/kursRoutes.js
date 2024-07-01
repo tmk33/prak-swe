@@ -7,5 +7,7 @@ module.exports = (pool) => {
   router.get('/', kursController.getAllKurs(pool));
   router.post('/', kursController.addKurs(pool));
 
+  router.get('/:fachbereich_id', kursController.getKurseByFachbereich(pool));
+
   return router;
 };
