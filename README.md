@@ -7,7 +7,7 @@ PostgreSQL: Download and install from https://www.postgresql.org/. Make sure you
 2. Clone the repository:
 
 Bash
-git clone https://www.gitkraken.com/learn/git/tutorials/what-is-a-git-repository
+git clone [https://www.gitkraken.com/learn/git/tutorials/what-is-a-git-repository](https://github.com/tmk33/prak-swe.git)
 cd [project-directory-name]
 
 3. Install dependencies:
