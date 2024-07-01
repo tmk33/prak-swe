@@ -4,10 +4,11 @@ Installation and Setup
 
 Node.js and npm: Download and install from https://nodejs.org/.
 PostgreSQL: Download and install from https://www.postgresql.org/. Make sure you remember your PostgreSQL username, password, and database name.
+
 2. Clone the repository:
 
 Bash
-git clone https://www.gitkraken.com/learn/git/tutorials/what-is-a-git-repository
+git clone [https://www.gitkraken.com/learn/git/tutorials/what-is-a-git-repository](https://github.com/tmk33/prak-swe.git)
 cd [project-directory-name]
 
 3. Install dependencies:
@@ -34,7 +35,7 @@ The server will be running at http://localhost:[PORT] (e.g., http://localhost:30
 
 API Endpoints
 
-/students
-/mitarbeiter
-/raum
+/students  
+/mitarbeiter  
+/raum  
 /kurs
