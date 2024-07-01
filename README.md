@@ -34,7 +34,7 @@ The server will be running at http://localhost:[PORT] (e.g., http://localhost:30
 
 API Endpoints
 
-/students
-/mitarbeiter
-/raum
+/students  
+/mitarbeiter  
+/raum  
 /kurs
