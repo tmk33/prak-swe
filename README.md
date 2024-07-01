@@ -4,6 +4,7 @@ Installation and Setup
 
 Node.js and npm: Download and install from https://nodejs.org/.
 PostgreSQL: Download and install from https://www.postgresql.org/. Make sure you remember your PostgreSQL username, password, and database name.
+
 2. Clone the repository:
 
 Bash
