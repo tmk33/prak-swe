@@ -26,7 +26,14 @@ DB_USER=[Your PostgreSQL username]
 DB_PASSWORD=[Your PostgreSQL password]
 DB_NAME=[Your PostgreSQL database name]
 
-5. Start the server:
+5. Restoring Database from Backup (myproject.sql)
+
+- Navigate to the directory where your myproject.sql file is located.
+- Execute the following command, replacing placeholders with your actual database information:  
+psql -U [Your PostgreSQL username] [Your database name] < myproject.sql  
+example: psql -U postgres myproject < myproject.sql
+
+6. Start the server:
 
 cmd:
 npm start
