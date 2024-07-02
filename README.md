@@ -48,8 +48,8 @@ The server will be running at http://localhost:[PORT] (e.g., http://localhost:30
 API Endpoints
 
 GET     /student    get all Student  
-POST    /student    create new Student
-DELETE  /student/:id/:name  delete Student by ID and Name
+POST    /student    create new Student  
+DELETE  /student/:id/:name  delete Student by ID and Name  
 GET     /mitarbeiter     get all Mitarbeiter  
 GET     /raum    get all Raum  
 GET     /kurs    get all Kurs  
