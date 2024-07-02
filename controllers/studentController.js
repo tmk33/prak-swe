@@ -35,3 +35,20 @@ exports.deleteStudent = (pool) => async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+exports.updateStudent = (pool) => async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { name, email, geburtsdatum, fachbereich_id } = req.body;
+
+        const updatedStudent = await Student.update(pool, id, { name, email, geburtsdatum, fachbereich_id });
+
+        if (updatedStudent) {
+            res.json(updatedStudent);
+        } else {
+            res.status(404).json({ error: 'Không tìm thấy sinh viên' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

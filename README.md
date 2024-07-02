@@ -49,7 +49,15 @@ API Endpoints
 
 GET     /student    get all Student  
 POST    /student    create new Student  
-DELETE  /student/:id/:name  delete Student by ID and Name  
+DELETE  /student/:id/:name  delete Student by ID and Name 
+PUT     /student/:id    update existing Student data (which value set null is unchange)  
+{
+  "name": null,     //name unchange  
+  "email": null,    //email unchange  
+  "geburtsdatum": null,     //geburtsdatum unchange  
+  "fachbereich_id": 2       //fachbereich_id change to 2  
+}  
+  
 GET     /mitarbeiter     get all Mitarbeiter  
 GET     /raum    get all Raum  
 GET     /kurs    get all Kurs  

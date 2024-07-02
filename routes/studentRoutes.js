@@ -6,6 +6,7 @@ module.exports = (pool) => {
 
 		router.get('/', studentController.getAllStudents(pool));
 		router.post('/', studentController.addStudent(pool));
+        router.put('/:id', studentController.updateStudent(pool));
         router.delete('/:id/:name', studentController.deleteStudent(pool));
 
 		return router;
