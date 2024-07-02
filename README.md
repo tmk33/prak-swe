@@ -51,7 +51,8 @@ GET     /student    get all Student
 POST    /student    create new Student  
 DELETE  /student/:id/:name  delete Student by ID and Name 
 PUT     /student/:id    update existing Student data (which value set null is unchange)  
-{
+  
+{  
   "name": null,     //name unchange  
   "email": null,    //email unchange  
   "geburtsdatum": null,     //geburtsdatum unchange  
