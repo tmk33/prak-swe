@@ -47,8 +47,11 @@ The server will be running at http://localhost:[PORT] (e.g., http://localhost:30
 
 API Endpoints
 
-/students get all Student  
-/mitarbeiter get all Mitarbeiter  
-/raum  get all Raum  
-/kurs get all Kurs  
-/kurs/:fachbereich_id get Kurs by Fachbereich  
+GET     /student    get all Student  
+POST    /student    create new Student
+DELETE  /student/:id/:name  delete Student by ID and Name
+GET     /mitarbeiter     get all Mitarbeiter  
+GET     /raum    get all Raum  
+GET     /kurs    get all Kurs  
+GET     /kurs/:fachbereich_id get Kurs by Fachbereich  
+

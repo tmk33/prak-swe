@@ -20,7 +20,7 @@ app.use(express.json());
 
 // Import và sử dụng các routes
 const studentRoutes = require('./routes/studentRoutes');
-app.use('/students', studentRoutes(pool)); // Truyền pool vào routes
+app.use('/student', studentRoutes(pool)); // Truyền pool vào routes
 
 const mitarbeiterRoutes = require('./routes/mitarbeiterRoutes');
 app.use('/mitarbeiter', mitarbeiterRoutes(pool));
@@ -38,5 +38,5 @@ app.get('/generate', async (req, res) => { // async ở đây
 });
 
 app.listen(port, () => {
-  console.log(`Server đang chạy tại http://localhost:${port}`);
+	console.log(`Server đang chạy tại http://localhost:${port}`);
 });
