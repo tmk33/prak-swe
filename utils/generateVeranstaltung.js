@@ -58,10 +58,9 @@ module.exports = (pool) => {
             const khungGioPhuHop = blocks.filter(block => block.available);
           
             return khungGioPhuHop;
-          }
+        }
           
-          
-          async function timGiangVienPhuHop(client, khungGioPhuHop, ngay) {
+        async function timGiangVienPhuHop(client, khungGioPhuHop, ngay) {
             let giangVienPhuHop = null;
             let minKursanzahl = 0;
             let maxKursanzahl = await client.query(`
@@ -120,7 +119,6 @@ module.exports = (pool) => {
             return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio, ngay } : null;
         }
         
-          
         async function timPhongTrong(client, khungGioPhuHop) {
             const result = await client.query(`
               SELECT id
