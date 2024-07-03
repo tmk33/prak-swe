@@ -119,7 +119,7 @@ module.exports = (pool) => {
             return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio, ngay } : null;
         }
         
-        async function timPhongTrong(client, khungGioPhuHop) {
+        async function timPhongTrong(client, khungGioPhuHop, ngay) {
             const result = await client.query(`
               SELECT id
               FROM Raum
@@ -127,13 +127,13 @@ module.exports = (pool) => {
                 SELECT raum_id
                 FROM Kurs
                 WHERE (
-                  (startTime <= $1 AND endTime > $1) OR 
+                  ((startTime <= $1 AND endTime > $1) OR 
                   (startTime < $2 AND endTime >= $2) OR
-                  (startTime >= $1 AND endTime <= $2)
+                  (startTime >= $1 AND endTime <= $2)) AND wochentag = $3
                 )
               )
               LIMIT 1
-            `, [khungGioPhuHop.startTime, khungGioPhuHop.endTime]);
+            `, [khungGioPhuHop.startTime, khungGioPhuHop.endTime, ngay]);
           
             return result.rows[0]?.id;
         }
@@ -182,14 +182,14 @@ module.exports = (pool) => {
             const giangVienPhuHop = await timGiangVienPhuHop(client, khungGioPhuHop, ngayItTietNhat);
 
             // Bước 4: Tìm phòng trống
-            //const phongTrong = await timPhongTrong(client, khungGioPhuHop);
+            const phongTrong = await timPhongTrong(client, giangVienPhuHop.khungGio, giangVienPhuHop.ngay);
 
             // Bước 5: Tạo khóa học mới
             //const newKursId = await taoKhoaHocMoi(client, name, ngayItTietNhat, khungGioPhuHop, giangVienPhuHop, phongTrong);
 
             await client.release();
 
-            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayItTietNhat, khungGio: khungGioPhuHop, giangVien: giangVienPhuHop });
+            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayItTietNhat, khungGio: khungGioPhuHop, giangVien: giangVienPhuHop, phong: phongTrong});
                     
         } catch (err) {
             console.error('Lỗi:', err);
