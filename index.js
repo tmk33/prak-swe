@@ -32,10 +32,7 @@ const kursRoutes = require('./routes/kursRoutes');
 app.use('/kurs', kursRoutes(pool));
 
 
-app.get('/generate', async (req, res) => { // async ở đây
-    const currentDateTime = await generateVeranstaltung.getCurrentDateTime(); // await ở đây
-    res.json({ currentDateTime });
-});
+app.post('/generate', generateVeranstaltung.generateVeranstaltung);
 
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);

@@ -11,7 +11,129 @@ module.exports = (pool) => {
         }
     };
 
-    const generateVeranstaltung = async () => { 
+    const generateVeranstaltung = async (req, res) => { 
+        const { name, fachbereichId } = req.body;
+
+        async function timNgayItTietNhat(client, fachbereichId) {
+            const result = await client.query(`
+              SELECT 
+                CASE WHEN mon <= tue AND mon <= wed AND mon <= thu AND mon <= fri THEN 'mon'
+                     WHEN tue <= wed AND tue <= thu AND tue <= fri THEN 'tue'
+                     WHEN wed <= thu AND wed <= fri THEN 'wed'
+                     WHEN thu <= fri THEN 'thu'
+                     ELSE 'fri' END AS ngay_it_tiet_nhat
+              FROM Wochentagfachbereich
+              WHERE fachbereich_id = $1
+            `, [fachbereichId]);
+          
+            return result.rows[0].ngay_it_tiet_nhat;
+        }
+          
+        async function timKhungGioPhuHop(client, fachbereichId, ngay) {
+            const result = await client.query(`
+              SELECT startTime, endTime
+              FROM Kurs
+              WHERE fachbereich_id = $1 AND wochentag = $2
+            `, [fachbereichId, ngay]);
+          
+            const khungGioDaCo = result.rows;
+            const blocks = [];
+          
+            // Khởi tạo mảng blocks với các block thời gian từ 8h đến 18h
+            for (let i = 8; i < 18; i += 2) {
+              blocks.push({ startTime: `${i}:00`, endTime: `${i + 2}:00`, available: true });
+            }
+          
+            // Đánh dấu các block đã bị chiếm dụng
+            for (const khungGio of khungGioDaCo) {
+              const startBlockIndex = Math.floor(moment(khungGio.starttime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ bắt đầu thành chỉ số block
+              const endBlockIndex = Math.floor(moment(khungGio.endtime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ kết thúc thành chỉ số block
+          
+              for (let i = startBlockIndex; i < endBlockIndex; i++) {
+                blocks[i].available = false; // Đánh dấu block là không khả dụng
+              }
+            }
+          
+            // Lọc ra các block còn trống
+            const khungGioPhuHop = blocks.filter(block => block.available);
+          
+            return khungGioPhuHop;
+          }
+          
+          
+          async function timGiangVienPhuHop(client, khungGioPhuHop, ngay) {
+            let giangVienPhuHop = null;
+            let minKursanzahl = 0;
+          
+            while (!giangVienPhuHop) {
+              const result = await client.query(`
+                SELECT id, kursanzahl
+                FROM Mitarbeiter
+                WHERE rolle = 'Dozent' AND kursanzahl = $1
+              `, [minKursanzahl]); // Loại bỏ LIMIT 1
+          
+              for (const giangVien of result.rows) {
+                const giangVienId = giangVien.id;
+                const conflict = await client.query(`
+                  SELECT 1
+                  FROM Kurs
+                  WHERE mitarbeiter_id = $1 AND wochentag = $4
+                    AND (
+                      (startTime <= $2 AND endTime > $2) OR
+                      (startTime < $3 AND endTime >= $3) OR
+                      (startTime >= $2 AND endTime <= $3)
+                    )
+                `, [giangVienId, khungGioPhuHop[0].startTime, khungGioPhuHop[0].endTime, ngay]);
+          
+                if (!conflict.rows.length) {
+                  giangVienPhuHop = giangVien;
+                  break; // Thoát khỏi vòng lặp for khi tìm thấy giảng viên phù hợp
+                }
+              }
+          
+              if (!giangVienPhuHop) {
+                minKursanzahl++; // Nếu không tìm thấy giảng viên phù hợp nào, tăng minKursanzahl lên 1
+              }
+            }
+          
+            return giangVienPhuHop?.id;
+          }
+          
+          
+        async function timPhongTrong(client, khungGioPhuHop) {
+            const result = await client.query(`
+              SELECT id
+              FROM Raum
+              WHERE id NOT IN (
+                SELECT raum_id
+                FROM Kurs
+                WHERE (
+                  (startTime <= $1 AND endTime > $1) OR 
+                  (startTime < $2 AND endTime >= $2) OR
+                  (startTime >= $1 AND endTime <= $2)
+                )
+              )
+              LIMIT 1
+            `, [khungGioPhuHop.startTime, khungGioPhuHop.endTime]);
+          
+            return result.rows[0]?.id;
+        }
+          
+        async function taoKhoaHocMoi(client, name, ngay, khungGio, giangVienId, phongId) {
+            const result = await client.query(`
+              INSERT INTO Kurs (name, wochentag, startTime, endTime, mitarbeiter_id, raum_id, fachbereich_id)
+              VALUES ($1, $2, $3, $4, $5, $6, (SELECT fachbereich_id FROM Wochentagfachbereich WHERE $2 = CASE WHEN mon <= tue AND mon <= wed AND mon <= thu AND mon <= fri THEN 'mon'
+                     WHEN tue <= wed AND tue <= thu AND tue <= fri THEN 'tue'
+                     WHEN wed <= thu AND wed <= fri THEN 'wed'
+                     WHEN thu <= fri THEN 'thu'
+                     ELSE 'fri' END))
+              RETURNING id
+            `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId]);
+          
+            return result.rows[0].id;
+        }
+          
+
         try {
             // 1. Tìm thứ trong tuần có k nhỏ nhất và lấy ngày đó ra
 
@@ -28,7 +150,28 @@ module.exports = (pool) => {
             // 7. nếu duyệt hết các k mà không tìm được thì quay lại bước 1 tìm ngày tiếp theo k+1
 
             // 8. tìm phòng trống có thời gian đó
-            
+
+            const client = await pool.connect();
+
+            // Bước 1: Tìm ngày có số tiết ít nhất
+            const ngayItTietNhat = await timNgayItTietNhat(client, fachbereichId);
+
+            // Bước 2: Tìm khung giờ phù hợp (2 tiếng)
+            const khungGioPhuHop = await timKhungGioPhuHop(client, fachbereichId, ngayItTietNhat);
+
+            // Bước 3: Tìm giảng viên phù hợp
+            const giangVienPhuHop = await timGiangVienPhuHop(client, khungGioPhuHop, ngayItTietNhat);
+
+            // Bước 4: Tìm phòng trống
+            //const phongTrong = await timPhongTrong(client, khungGioPhuHop);
+
+            // Bước 5: Tạo khóa học mới
+            //const newKursId = await taoKhoaHocMoi(client, name, ngayItTietNhat, khungGioPhuHop, giangVienPhuHop, phongTrong);
+
+            await client.release();
+
+            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayItTietNhat, khungGio: khungGioPhuHop, giangVien: giangVienPhuHop });
+                    
         } catch (err) {
             console.error('Lỗi:', err);
             return new Date(); // Trả về thời gian hiện tại của hệ thống nếu có lỗi

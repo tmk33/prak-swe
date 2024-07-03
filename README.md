@@ -25,11 +25,11 @@ npm install
 
 Create a .env file in the project root directory and fill in the following information:
 
-PORT=[Port number you want to use (e.g., 3000)]
-DB_HOST=[Your PostgreSQL host address (e.g., localhost)]
-DB_USER=[Your PostgreSQL username]
-DB_PASSWORD=[Your PostgreSQL password]
-DB_NAME=[Your PostgreSQL database name]
+PGUSER=[Your PostgreSQL username]  
+PGHOST=[Your PostgreSQL host address (e.g., localhost)]  
+PGDATABASE=[Your PostgreSQL database name]  
+PGPASSWORD=[Your PostgreSQL password]  
+PGPORT=5432 # default port  
 
 5. Restoring Database from Backup (myproject.sql)
 
