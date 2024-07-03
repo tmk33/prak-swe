@@ -65,44 +65,61 @@ module.exports = (pool) => {
             let giangVienPhuHop = null;
             let minKursanzahl = 0;
             let maxKursanzahl = await client.query(`
-              SELECT MAX(kursanzahl)
-              FROM Mitarbeiter
-              WHERE rolle = 'Dozent'
-            `);
-          
-            maxKursanzahl = maxKursanzahl.rows[0].max; // Lấy giá trị maxKursanzahl
-          
-            while (!giangVienPhuHop && minKursanzahl <= maxKursanzahl+1) { // Thêm điều kiện kiểm tra maxKursanzahl
-              const result = await client.query(`
-                SELECT id, kursanzahl
+                SELECT MAX(kursanzahl)
                 FROM Mitarbeiter
-                WHERE rolle = 'Dozent' AND kursanzahl = $1
-              `, [minKursanzahl]);
-          
-              for (const giangVien of result.rows) {
-                const giangVienId = giangVien.id;
-                const conflict = await client.query(`
-                  SELECT 1
-                  FROM Kurs
-                  WHERE mitarbeiter_id = $1 AND wochentag = $4
-                    AND (
-                      (startTime <= $2 AND endTime > $2) OR
-                      (startTime < $3 AND endTime >= $3) OR
-                      (startTime >= $2 AND endTime <= $3)
-                    )
-                `, [giangVienId, khungGioPhuHop[0].startTime, khungGioPhuHop[0].endTime, ngay]);
-          
-                if (!conflict.rows.length) {
-                  giangVienPhuHop = giangVien;
-                  break; 
+                WHERE rolle = 'Dozent'
+            `);
+        
+            maxKursanzahl = maxKursanzahl.rows[0].max; // Lấy giá trị maxKursanzahl
+            let khungGioIndex = 0; // Khởi tạo chỉ số khung giờ
+            let khungGio = khungGioPhuHop[khungGioIndex]; // Lấy khung giờ đầu tiên
+        
+            while (!giangVienPhuHop && minKursanzahl <= maxKursanzahl + 1 && khungGioIndex < khungGioPhuHop.length) { 
+                // Duyệt qua các khung giờ
+                khungGio = khungGioPhuHop[khungGioIndex];
+                
+                const result = await client.query(`
+                    SELECT id, kursanzahl
+                    FROM Mitarbeiter
+                    WHERE rolle = 'Dozent' AND kursanzahl = $1
+                `, [minKursanzahl]);
+        
+                for (const giangVien of result.rows) {
+                    const giangVienId = giangVien.id;
+                    const conflict = await client.query(`
+                        SELECT 1
+                        FROM Kurs
+                        WHERE mitarbeiter_id = $1 AND wochentag = $4
+                            AND (
+                                (startTime <= $2 AND endTime > $2) OR
+                                (startTime < $3 AND endTime >= $3) OR
+                                (startTime >= $2 AND endTime <= $3)
+                            )
+                    `, [giangVienId, khungGio.startTime, khungGio.endTime, ngay]); // Sử dụng khungGio hiện tại
+        
+                    if (!conflict.rows.length) {
+                        giangVienPhuHop = giangVien;
+                        break;
+                    }
                 }
-              }
-          
-              minKursanzahl++; 
+        
+                if (!giangVienPhuHop) {
+                    if (minKursanzahl >= maxKursanzahl + 1) {
+                        // Nếu đã duyệt hết tất cả các giảng viên với kursanzahl nhỏ hơn maxKursanzahl + 1 mà không tìm thấy
+                        // thì chuyển sang khung giờ tiếp theo
+                        minKursanzahl = 0; // Reset lại minKursanzahl cho khung giờ mới
+                        khungGioIndex++; // Chuyển sang khung giờ tiếp theo
+                    } else {
+                        minKursanzahl++;
+                    }
+                }
             }
-          
-            return giangVienPhuHop?.id;
-          }
+        
+            //return giangVienPhuHop?.id;
+            //return khungGio;
+            return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio, ngay } : null;
+        }
+        
           
         async function timPhongTrong(client, khungGioPhuHop) {
             const result = await client.query(`
