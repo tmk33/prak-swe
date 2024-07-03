@@ -64,13 +64,20 @@ module.exports = (pool) => {
           async function timGiangVienPhuHop(client, khungGioPhuHop, ngay) {
             let giangVienPhuHop = null;
             let minKursanzahl = 0;
+            let maxKursanzahl = await client.query(`
+              SELECT MAX(kursanzahl)
+              FROM Mitarbeiter
+              WHERE rolle = 'Dozent'
+            `);
           
-            while (!giangVienPhuHop) {
+            maxKursanzahl = maxKursanzahl.rows[0].max; // Lấy giá trị maxKursanzahl
+          
+            while (!giangVienPhuHop && minKursanzahl <= maxKursanzahl+1) { // Thêm điều kiện kiểm tra maxKursanzahl
               const result = await client.query(`
                 SELECT id, kursanzahl
                 FROM Mitarbeiter
                 WHERE rolle = 'Dozent' AND kursanzahl = $1
-              `, [minKursanzahl]); // Loại bỏ LIMIT 1
+              `, [minKursanzahl]);
           
               for (const giangVien of result.rows) {
                 const giangVienId = giangVien.id;
@@ -87,18 +94,15 @@ module.exports = (pool) => {
           
                 if (!conflict.rows.length) {
                   giangVienPhuHop = giangVien;
-                  break; // Thoát khỏi vòng lặp for khi tìm thấy giảng viên phù hợp
+                  break; 
                 }
               }
           
-              if (!giangVienPhuHop) {
-                minKursanzahl++; // Nếu không tìm thấy giảng viên phù hợp nào, tăng minKursanzahl lên 1
-              }
+              minKursanzahl++; 
             }
           
             return giangVienPhuHop?.id;
           }
-          
           
         async function timPhongTrong(client, khungGioPhuHop) {
             const result = await client.query(`
