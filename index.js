@@ -37,7 +37,7 @@ app.use('/kurs', kursRoutes(pool));
 const sonderveranstaltungRoutes = require('./routes/sonderveranstaltungRoutes');
 app.use('/sonderveranstaltung', sonderveranstaltungRoutes(pool));
 
-app.post('/generate', generateVeranstaltung.generateVeranstaltung);
+app.post('/kurs/add', generateVeranstaltung.generateVeranstaltung);
 
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);

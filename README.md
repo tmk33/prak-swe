@@ -63,4 +63,9 @@ GET     /mitarbeiter     get all Mitarbeiter
 GET     /raum    get all Raum  
 GET     /kurs    get all Kurs  
 GET     /kurs/:fachbereich_id get Kurs by Fachbereich  
+POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
+{  
+    "name": "example",  
+    "fachbereichId": 1  
+}  
 
