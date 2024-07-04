@@ -16,20 +16,27 @@ module.exports = (pool) => {
 
         async function timNgayItTietNhat(client, fachbereichId) {
             const result = await client.query(`
-              SELECT 
-                CASE WHEN mon <= tue AND mon <= wed AND mon <= thu AND mon <= fri THEN 'mon'
-                     WHEN tue <= wed AND tue <= thu AND tue <= fri THEN 'tue'
-                     WHEN wed <= thu AND wed <= fri THEN 'wed'
-                     WHEN thu <= fri THEN 'thu'
-                     ELSE 'fri' END AS ngay_it_tiet_nhat
+              SELECT mon, tue, wed, thu, fri
               FROM Wochentagfachbereich
               WHERE fachbereich_id = $1
             `, [fachbereichId]);
           
-            return result.rows[0].ngay_it_tiet_nhat;
-        }
+            const { mon, tue, wed, thu, fri } = result.rows[0];
+            const ngay = [
+              { name: 'mon', value: mon },
+              { name: 'tue', value: tue },
+              { name: 'wed', value: wed },
+              { name: 'thu', value: thu },
+              { name: 'fri', value: fri }
+            ];
           
-        async function timKhungGioPhuHop(client, fachbereichId, ngay) {
+            // Sắp xếp mảng ngày theo số tiết tăng dần
+            ngay.sort((a, b) => a.value - b.value);
+          
+            return ngay; // Trả về toàn bộ mảng ngày đã sắp xếp
+          }
+          
+        async function timCacKhungGioPhuHop(client, fachbereichId, ngay) {
             const result = await client.query(`
               SELECT startTime, endTime
               FROM Kurs
@@ -60,7 +67,7 @@ module.exports = (pool) => {
             return khungGioPhuHop;
         }
           
-        async function timGiangVienPhuHop(client, khungGioPhuHop, ngay) {
+        async function timGiangVienVaKhungGioPhuHop(client, khungGioPhuHop, ngay) {
             let giangVienPhuHop = null;
             let minKursanzahl = 0;
             let maxKursanzahl = await client.query(`
@@ -170,26 +177,36 @@ module.exports = (pool) => {
 
             // 8. tìm phòng trống có thời gian đó
 
+            // ... (Logic xử lý trước đó) ...
             const client = await pool.connect();
+            const ngay = await timNgayItTietNhat(client, fachbereichId);
+            let cacKhungGioPhuHop = [];
+            let ngayChon = null;
+            let giangVienVaKhungGioPhuHop = null;
+            let phongTrong = null;
+            let ngayIndex = 0; // Khởi tạo chỉ số ngày
+            
+            while (!giangVienVaKhungGioPhuHop && ngayIndex < ngay.length) {
+                // Duyệt qua các ngày theo thứ tự số tiết tăng dần
+                ngayChon = ngay[ngayIndex].name;
+                cacKhungGioPhuHop = await timCacKhungGioPhuHop(client, fachbereichId, ngayChon);
 
-            // Bước 1: Tìm ngày có số tiết ít nhất
-            const ngayItTietNhat = await timNgayItTietNhat(client, fachbereichId);
-
-            // Bước 2: Tìm khung giờ phù hợp (2 tiếng)
-            const khungGioPhuHop = await timKhungGioPhuHop(client, fachbereichId, ngayItTietNhat);
-
-            // Bước 3: Tìm giảng viên phù hợp
-            const giangVienPhuHop = await timGiangVienPhuHop(client, khungGioPhuHop, ngayItTietNhat);
-
-            // Bước 4: Tìm phòng trống
-            const phongTrong = await timPhongTrong(client, giangVienPhuHop.khungGio, giangVienPhuHop.ngay);
-
-            // Bước 5: Tạo khóa học mới
+                if (cacKhungGioPhuHop.length > 0) {
+                    // Tìm giảng viên và phòng phù hợp cho ngày này
+                    giangVienVaKhungGioPhuHop = await timGiangVienVaKhungGioPhuHop(client, cacKhungGioPhuHop, ngayChon);
+                    if (giangVienVaKhungGioPhuHop) {
+                        phongTrong = await timPhongTrong(client, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.ngay);
+                        break; // Thoát vòng lặp khi tìm thấy khung giờ, giảng viên và phòng phù hợp
+                    }
+                }
+                ngayIndex++;
+            }
+                // Bước 5: Tạo khóa học mới
             //const newKursId = await taoKhoaHocMoi(client, name, ngayItTietNhat, khungGioPhuHop, giangVienPhuHop, phongTrong);
 
             await client.release();
 
-            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayItTietNhat, khungGio: khungGioPhuHop, giangVien: giangVienPhuHop, phong: phongTrong});
+            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayChon, cacKhungGio: cacKhungGioPhuHop, ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong});
                     
         } catch (err) {
             console.error('Lỗi:', err);
