@@ -15,7 +15,7 @@ exports.addRaum = (pool) => async (req, res) => {
     const { name, ort } = req.body; // Lấy dữ liệu từ body request
     const newRaum = await Raum.add(pool, { name, ort });
     res.status(201).json(newRaum); // Trả về thông tin sinh viên mới với mã 201 Created
-} catch (err) {
+    } catch (err) {
     res.status(500).json({ error: err.message });
-}
+    }
 };
