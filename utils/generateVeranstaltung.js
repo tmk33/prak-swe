@@ -167,7 +167,7 @@ module.exports = (pool) => {
               // Cập nhật số tiết trong Wochentagfachbereich
               await client.query(`
                 UPDATE wochentagfachbereich
-                SET mon = mon + 1 
+                SET ${ngay} = ${ngay} + 1
                 WHERE fachbereich_id = $1
               `, [fachbereichId]);
           
