@@ -19,10 +19,20 @@ exports.getKurseByFachbereich = (pool) => async (req, res) => {
     }
   };
 
-  exports.getKurseByMitarbeiter = (pool) => async (req, res) => {
+  exports.getKurseByMitarbeiterID = (pool) => async (req, res) => {
     try {
       const mitarbeiter_id = parseInt(req.params.mitarbeiter_id);
-      const kurse = await Kurs.getByMitarbeiter(pool, mitarbeiter_id);
+      const kurse = await Kurs.getByMitarbeiterID(pool, mitarbeiter_id);
+      res.json(kurse);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+  exports.getKurseByMitarbeiterName = (pool) => async (req, res) => {
+    try {
+      const mitarbeiterName = req.params.mitarbeiterName;
+      const kurse = await Kurs.getByMitarbeiterName(pool, mitarbeiterName);
       res.json(kurse);
     } catch (err) {
       res.status(500).json({ error: err.message });

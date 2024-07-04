@@ -8,8 +8,8 @@ module.exports = (pool) => {
   router.post('/', kursController.addKurs(pool));
 
   router.get('/fachbereich/:fachbereich_id', kursController.getKurseByFachbereich(pool));
-  router.get('/dozentID/:mitarbeiter_id', kursController.getKurseByMitarbeiter(pool));
-  //router.get('/dozentName/:mitarbeiter_id', kursController.getKurseByMitarbeiter(pool));
+  router.get('/dozent/id/:mitarbeiter_id', kursController.getKurseByMitarbeiterID(pool));
+  router.get('/dozent/name/:mitarbeiterName', kursController.getKurseByMitarbeiterName(pool));
 
 
 
