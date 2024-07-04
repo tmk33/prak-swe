@@ -49,6 +49,12 @@ API Endpoints
 
 GET     /student    get all Student  
 POST    /student    create new Student  
+ {  
+        "name": "Lian Tritten",  
+        "email": "test1@example.com",  
+        "geburtsdatum": "2000-09-24",  
+        "fachbereich_id": 1  
+}  
 DELETE  /student/:id/:name  delete Student by ID and Name  
 PUT     /student/:id    update existing Student data (which value set null is unchange)  
   
@@ -60,12 +66,34 @@ PUT     /student/:id    update existing Student data (which value set null is un
 }  
   
 GET     /mitarbeiter     get all Mitarbeiter  
+POST    /mitarbeiter    create new Student  
+ {
+        "name": "Johann Mandel",  
+        "email": "johann.mandel@example.com",  
+        "geburtsdatum": "1990-03-09",  
+        "rolle": "Dozent",  //oder Admin, Marketing  
+}
+  
 GET     /raum    get all Raum  
+POST    /raum    create new Raum with key "name", "ort"
+{  
+    "name": "new Raum",  
+    ""ort": "Campus A"  
+}  
+
+  
 GET     /kurs    get all Kurs  
 GET     /kurs/:fachbereich_id get Kurs by Fachbereich  
 POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
 {  
-    "name": "example",  
+    "name": "new Kurs",  
     "fachbereichId": 1  
 }  
 
+GET     /fachbereich    get all Fachbereich 
+POST    /fachbereich    create new Fachbereich with key "name"
+{  
+    "name": "new Fachbereich",  
+}  
+
+GET     /sonderveranstaltung    get all Sonderveranstaltung 
