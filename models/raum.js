@@ -6,6 +6,12 @@ class Raum {
   
     static async add(pool, raumData) {
       // Thêm logic để chèn dữ liệu studentData vào bảng students
+      const { name, ort } = raumData;
+        const result = await pool.query(
+      'INSERT INTO raum (name, ort) VALUES ($1, $2) RETURNING *',
+      [name, ort]
+    );
+        return result.rows[0];
     }
   }
   
