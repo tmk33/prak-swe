@@ -145,16 +145,12 @@ module.exports = (pool) => {
             return result.rows[0]?.id;
         }
           
-        async function taoKhoaHocMoi(client, name, ngay, khungGio, giangVienId, phongId) {
+        async function luuKhoaHocMoiVaoDatabase(client, name, ngay, khungGio, giangVienId, phongId) {
             const result = await client.query(`
               INSERT INTO Kurs (name, wochentag, startTime, endTime, mitarbeiter_id, raum_id, fachbereich_id)
-              VALUES ($1, $2, $3, $4, $5, $6, (SELECT fachbereich_id FROM Wochentagfachbereich WHERE $2 = CASE WHEN mon <= tue AND mon <= wed AND mon <= thu AND mon <= fri THEN 'mon'
-                     WHEN tue <= wed AND tue <= thu AND tue <= fri THEN 'tue'
-                     WHEN wed <= thu AND wed <= fri THEN 'wed'
-                     WHEN thu <= fri THEN 'thu'
-                     ELSE 'fri' END))
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
               RETURNING id
-            `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId]);
+            `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId, fachbereichId]);
           
             return result.rows[0].id;
         }
@@ -202,11 +198,11 @@ module.exports = (pool) => {
                 ngayIndex++;
             }
                 // Bước 5: Tạo khóa học mới
-            //const newKursId = await taoKhoaHocMoi(client, name, ngayItTietNhat, khungGioPhuHop, giangVienPhuHop, phongTrong);
+            const newKursId = await luuKhoaHocMoiVaoDatabase(client, name, ngayChon, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.giangVienId, phongTrong);
 
             await client.release();
 
-            res.json({ message: 'Tạo khóa học mới thành công!', wochentag: ngayChon, cacKhungGio: cacKhungGioPhuHop, ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong});
+            res.json({ message: 'Tạo khóa học mới thành công!', ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong, kurID: newKursId});
                     
         } catch (err) {
             console.error('Lỗi:', err);
