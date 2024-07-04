@@ -28,6 +28,9 @@ app.use('/mitarbeiter', mitarbeiterRoutes(pool));
 const raumRoutes = require('./routes/raumRoutes');
 app.use('/raum', raumRoutes(pool));
 
+const fachbereichRoutes = require('./routes/fachbereichRoutes');
+app.use('/fachbereich', fachbereichRoutes(pool));
+
 const kursRoutes = require('./routes/kursRoutes');
 app.use('/kurs', kursRoutes(pool));
 
