@@ -19,6 +19,16 @@ exports.getKurseByFachbereich = (pool) => async (req, res) => {
     }
   };
 
+  exports.getKurseByMitarbeiter = (pool) => async (req, res) => {
+    try {
+      const mitarbeiter_id = parseInt(req.params.mitarbeiter_id);
+      const kurse = await Kurs.getByMitarbeiter(pool, mitarbeiter_id);
+      res.json(kurse);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
 exports.addKurs = (pool) => async (req, res) => {
   // ... (Thêm logic xử lý cho việc thêm sinh viên)
 };
