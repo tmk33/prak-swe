@@ -31,6 +31,8 @@ app.use('/raum', raumRoutes(pool));
 const kursRoutes = require('./routes/kursRoutes');
 app.use('/kurs', kursRoutes(pool));
 
+const sonderveranstaltungRoutes = require('./routes/sonderveranstaltungRoutes');
+app.use('/sonderveranstaltung', sonderveranstaltungRoutes(pool));
 
 app.post('/generate', generateVeranstaltung.generateVeranstaltung);
 
