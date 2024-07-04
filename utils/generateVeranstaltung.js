@@ -145,35 +145,44 @@ module.exports = (pool) => {
             return result.rows[0]?.id;
         }
           
-        async function luuKhoaHocMoiVaoDatabase(client, name, ngay, khungGio, giangVienId, phongId) {
-            const result = await client.query(`
-              INSERT INTO Kurs (name, wochentag, startTime, endTime, mitarbeiter_id, raum_id, fachbereich_id)
-              VALUES ($1, $2, $3, $4, $5, $6, $7)
-              RETURNING id
-            `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId, fachbereichId]);
+        async function luuKhoaHocMoiVaoDatabase(client, name, ngay, khungGio, giangVienId, phongId, fachbereichId) {
+            try {
+              await client.query('BEGIN'); // Bắt đầu transaction
           
-            return result.rows[0].id;
-        }
+              const result = await client.query(`
+                INSERT INTO Kurs (name, wochentag, startTime, endTime, mitarbeiter_id, raum_id, fachbereich_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                RETURNING id
+              `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId, fachbereichId]);
+          
+              const newKursId = result.rows[0].id;
+          
+              // Cập nhật kursanzahl của giảng viên
+              await client.query(`
+                UPDATE Mitarbeiter
+                SET kursanzahl = kursanzahl + 1
+                WHERE id = $1
+              `, [giangVienId]);
+          
+              // Cập nhật số tiết trong Wochentagfachbereich
+              await client.query(`
+                UPDATE wochentagfachbereich
+                SET mon = mon + 1 
+                WHERE fachbereich_id = $1
+              `, [fachbereichId]);
+          
+              await client.query('COMMIT'); // Kết thúc transaction thành công
+          
+              return newKursId;
+            } catch (error) {
+              await client.query('ROLLBACK'); // Hoàn tác transaction nếu có lỗi
+              throw error; // Ném lỗi để xử lý ở bên ngoài
+            }
+          }
+          
           
 
         try {
-            // 1. Tìm thứ trong tuần có k nhỏ nhất và lấy ngày đó ra
-
-            // 2. tìm các veranstaltung có cùng fachbereich trong thứ đó và tìm ra giờ phù hợp
-
-            // 3. tìm các Lehrperson có só k nhỏ nhất. đầu ra là 1 array Lehrperson
-
-            // 4. duyệt từng phần tử trong array và so sánh xem giờ đã tìm ở bước 2 có phù hợp với Lehrperson đó không, nếu không thì tìm lehrperson tiếp theo
-
-            // 5. nếu duyệt hết mà không tìm được Lehrperson phù hợp thì tìm Lehrperson có số k+1 tiếp theo
-
-            // 6. nếu không tìm được Lehrperson phù hợp thì quay lại bước 2 tìm khung giờ phù hợp tiếp theo
-
-            // 7. nếu duyệt hết các k mà không tìm được thì quay lại bước 1 tìm ngày tiếp theo k+1
-
-            // 8. tìm phòng trống có thời gian đó
-
-            // ... (Logic xử lý trước đó) ...
             const client = await pool.connect();
             const ngay = await timNgayItTietNhat(client, fachbereichId);
             let cacKhungGioPhuHop = [];
@@ -198,7 +207,7 @@ module.exports = (pool) => {
                 ngayIndex++;
             }
                 // Bước 5: Tạo khóa học mới
-            const newKursId = await luuKhoaHocMoiVaoDatabase(client, name, ngayChon, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.giangVienId, phongTrong);
+            const newKursId = await luuKhoaHocMoiVaoDatabase(client, name, ngayChon, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.giangVienId, phongTrong, fachbereichId);
 
             await client.release();
 
