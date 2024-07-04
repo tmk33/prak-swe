@@ -75,7 +75,7 @@ POST    /mitarbeiter    create new Student
 }
   
 GET     /raum    get all Raum  
-POST    /raum    create new Raum with key "name", "ort"
+POST    /raum    create new Raum with key "name", "ort"  
 {  
     "name": "new Raum",  
     ""ort": "Campus A"  
@@ -90,8 +90,8 @@ POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"
     "fachbereichId": 1  
 }  
 
-GET     /fachbereich    get all Fachbereich 
-POST    /fachbereich    create new Fachbereich with key "name"
+GET     /fachbereich    get all Fachbereich  
+POST    /fachbereich    create new Fachbereich with key "name"  
 {  
     "name": "new Fachbereich",  
 }  
