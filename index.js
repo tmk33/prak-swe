@@ -41,7 +41,7 @@ app.use('/sonderveranstaltung', sonderveranstaltungRoutes(pool));
 
 app.post('/kurs/add', generateVeranstaltung.generateVeranstaltung);
 
-app.post('/krankmeldung/:mitarbeiterId/:ngay', krankMeldung.krankMeldung);
+app.post('/krankmeldung', krankMeldung.krankMeldung);
 
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);

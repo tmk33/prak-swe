@@ -3,7 +3,7 @@ const moment = require('moment');
 module.exports = (pool) => {
 
     const krankMeldung = async (req, res) => { 
-        const { mitarbeiterId, ngay } = req.params;
+        const { mitarbeiterId, ngay, date } = req.body;
 
             // Hàm tìm giảng viên thay thế
         async function timGiangVienThayThe(client, kurs, ngay) {
@@ -106,12 +106,12 @@ module.exports = (pool) => {
                 if (giangVienThayThe) {
                     // Cập nhật khóa học với giảng viên thay thế
                     // thông báo cho giảng viên mới biết
-                    ketQuaXuLy.push({ kursId: kurs.id, status: 'thayTheGiangVien', giangVienMoi: giangVienThayThe.giangVienId }); // Lưu kết quả
+                    ketQuaXuLy.push({ date: date, kursId: kurs.id, status: 'thayTheGiangVien', giangVienMoi: giangVienThayThe.giangVienId }); // Lưu kết quả
 
                 } else {
                     // Không tìm thấy giảng viên thay thế, hủy khóa học và thông báo cho sinh viên
                     await huyKhoaHocVaThongBaoSinhVien(client, kurs.fachbereich_id, kurs.id);
-                    ketQuaXuLy.push({ kursId: kurs.id, status: 'huyKurs' }); // Lưu kết quả
+                    ketQuaXuLy.push({ date: date, kursId: kurs.id, status: 'huyKurs' }); // Lưu kết quả
 
                 }
             }
