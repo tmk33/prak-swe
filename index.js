@@ -14,6 +14,8 @@ const pool = new Pool({
 });
 
 const generateVeranstaltung = require('./utils/generateVeranstaltung')(pool); // Truyền pool vào module
+const krankMeldung = require('./utils/krankMeldung')(pool); // Truyền pool vào module
+
 
 // Sử dụng middleware để phân tích JSON
 app.use(express.json());
@@ -38,6 +40,8 @@ const sonderveranstaltungRoutes = require('./routes/sonderveranstaltungRoutes');
 app.use('/sonderveranstaltung', sonderveranstaltungRoutes(pool));
 
 app.post('/kurs/add', generateVeranstaltung.generateVeranstaltung);
+
+app.post('/krankmeldung/:mitarbeiterId/:ngay', krankMeldung.krankMeldung);
 
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);
