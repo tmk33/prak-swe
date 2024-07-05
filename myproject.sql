@@ -105,6 +105,7 @@ CREATE TABLE public.mitarbeiter (
     email character varying(255) NOT NULL,
     geburtsdatum date,
     rolle character varying(20),
+    kursanzahl integer DEFAULT 0,
     CONSTRAINT mitarbeiter_rolle_check CHECK (((rolle)::text = ANY ((ARRAY['Admin'::character varying, 'Dozent'::character varying, 'Marketing'::character varying])::text[])))
 );
 
@@ -362,6 +363,33 @@ COPY public.kurs (id, name, wochentag, starttime, endtime, mitarbeiter_id, raum_
 1	Software Engineering	mon	08:00:00	10:00:00	1	1	1
 3	Theoretische Informatik	mon	10:00:00	12:00:00	1	3	1
 2	Robotik	mon	10:00:00	12:00:00	2	2	3
+5	Technische Englisch	wed	08:00:00	10:00:00	2	1	1
+6	Technische Englisch 2	wed	10:00:00	12:00:00	2	1	3
+7	Technische Englisch 2	tue	10:00:00	12:00:00	2	1	3
+8	Datennetze	tue	08:00:00	10:00:00	1	1	3
+9	Datennetze	tue	12:00:00	14:00:00	1	1	2
+10	Datennetze	tue	10:00:00	12:00:00	1	1	2
+11	Datennetze	wed	10:00:00	12:00:00	1	1	2
+12	Datennetze	wed	10:00:00	12:00:00	5	1	2
+13	Datennetze	thu	08:00:00	10:00:00	5	1	2
+14	Datennetze	thu	10:00:00	12:00:00	5	1	3
+15	Datennetze	thu	10:00:00	12:00:00	5	2	3
+16	Software Engineering 2	tue	12:00:00	14:00:00	2	2	3
+17	Software Engineering 2	thu	10:00:00	12:00:00	1	3	2
+18	Software Engineering 2	wed	10:00:00	12:00:00	8	2	1
+19	Software Engineering 2	wed	12:00:00	14:00:00	1	1	\N
+20	Software Engineering 3	wed	12:00:00	14:00:00	2	2	\N
+22	Software Engineering 4	tue	14:00:00	16:00:00	8	1	\N
+24	Software Engineering 4	tue	14:00:00	16:00:00	1	2	\N
+25	Software Engineering 4	tue	14:00:00	16:00:00	2	3	\N
+26	Software Engineering 4	tue	14:00:00	16:00:00	5	\N	\N
+28	Software Engineering 4	tue	16:00:00	18:00:00	8	1	\N
+29	Software Engineering 4	tue	16:00:00	18:00:00	1	2	\N
+30	Software Engineering 4	tue	16:00:00	18:00:00	2	3	3
+31	Software Engineering 4	wed	08:00:00	10:00:00	8	2	3
+32	Software Engineering 4	wed	12:00:00	14:00:00	8	3	3
+33	Software Engineering 4	thu	12:00:00	14:00:00	1	1	2
+34	Software Engineering 4	fri	08:00:00	10:00:00	2	1	2
 \.
 
 
@@ -369,11 +397,15 @@ COPY public.kurs (id, name, wochentag, starttime, endtime, mitarbeiter_id, raum_
 -- Data for Name: mitarbeiter; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle) FROM stdin;
-1	Babette Mein	babette.mein@example.com	1980-05-15	Dozent
-2	Louise Kunz	louise.kunz@example.com	1985-08-22	Dozent
-3	Johann Mandel	johann.mandel@example.com	1990-03-10	Marketing
-4	Waldemar Rose	waldemar.rose@example.com	1975-12-03	Admin
+COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle, kursanzahl) FROM stdin;
+3	Johann Mandel	johann.mandel@example.com	1990-03-10	Marketing	0
+4	Waldemar Rose	waldemar.rose@example.com	1975-12-03	Admin	0
+6	Anna Schmidt	schmidt@email.de	1990-12-22	Admin	0
+7	Lukas Mueller	mueller@email.de	1988-08-10	Marketing	0
+5	Max Mustermann	mustermann@email.de	1985-03-15	Dozent	4
+8	Babette Reis	babette.reis@example.com	1981-05-14	Dozent	4
+1	Babette Mein	babette.mein@example.com	1980-05-15	Dozent	4
+2	Louise Kunz	louise.kunz@example.com	1985-08-22	Dozent	4
 \.
 
 
@@ -407,6 +439,7 @@ COPY public.student (id, name, email, geburtsdatum, fachbereich_id) FROM stdin;
 2	Ulla Shriver	test2@example.com	2001-06-12	2
 3	Anne Bedrosian	test4@example.com	2002-03-20	3
 4	Lisbeth Gaertner	test3@example.com	1999-11-08	1
+6	Sascha Krantz	sascha.krantz@example.com	2002-05-12	2
 \.
 
 
@@ -426,9 +459,9 @@ COPY public.student_sonderveranstaltung (student_id, sonderveranstaltung_id) FRO
 --
 
 COPY public.wochentagfachbereich (id, fachbereich_id, mon, tue, wed, thu, fri) FROM stdin;
-1	1	1	1	0	0	0
-2	2	2	2	2	1	1
-3	3	3	2	2	2	2
+1	1	4	1	0	0	0
+3	3	5	2	3	2	2
+2	2	2	2	2	2	2
 \.
 
 
@@ -443,14 +476,14 @@ SELECT pg_catalog.setval('public.fachbereich_id_seq', 3, true);
 -- Name: kurs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.kurs_id_seq', 3, true);
+SELECT pg_catalog.setval('public.kurs_id_seq', 34, true);
 
 
 --
 -- Name: mitarbeiter_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mitarbeiter_id_seq', 4, true);
+SELECT pg_catalog.setval('public.mitarbeiter_id_seq', 8, true);
 
 
 --
@@ -471,7 +504,7 @@ SELECT pg_catalog.setval('public.sonderveranstaltung_id_seq', 2, true);
 -- Name: student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.student_id_seq', 4, true);
+SELECT pg_catalog.setval('public.student_id_seq', 7, true);
 
 
 --
