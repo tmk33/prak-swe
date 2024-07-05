@@ -97,3 +97,12 @@ POST    /fachbereich    create new Fachbereich with key "name"
 }  
 
 GET     /sonderveranstaltung    get all Sonderveranstaltung 
+  
+POST    /krankmeldung   krankmeldung  
+{  
+    "mitarbeiterId": 5,  
+    "ngay": "wed",  
+    "date":"12-02-2024"  
+}  
+
+
