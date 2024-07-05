@@ -23,7 +23,7 @@ module.exports = (pool) => {
             // Gửi thông báo đến từng sinh viên (triển khai theo cách bạn muốn)
             for (const sinhVien of sinhVienRows) {
                 // ... (Gửi email, thông báo trong ứng dụng, ...)
-                console.log("Thong bao cho sinh vien " + sinhVien.email + " Kurs " + kursId + " bi huy!");
+                console.log("Thong bao cho sinh vien " + sinhVien.email + " Kurs " + kursId + " ngay " + date + " bi huy!");
             }
         }
 
@@ -107,7 +107,7 @@ module.exports = (pool) => {
                     // Cập nhật khóa học với giảng viên thay thế
                     // thông báo cho giảng viên mới biết
                     ketQuaXuLy.push({ date: date, kursId: kurs.id, status: 'thayTheGiangVien', giangVienMoi: giangVienThayThe.giangVienId }); // Lưu kết quả
-                    console.log("Thong bao cho Dozent: " + giangVienThayThe.email + "dam nhiem Kurs " + kurs.id );
+                    console.log("Thong bao cho Dozent: " + giangVienThayThe.email + " dam nhiem Kurs " + kurs.id + " ngay " + date);
                 } else {
                     // Không tìm thấy giảng viên thay thế, hủy khóa học và thông báo cho sinh viên
                     await huyKhoaHocVaThongBaoSinhVien(client, kurs.fachbereich_id, kurs.id);
