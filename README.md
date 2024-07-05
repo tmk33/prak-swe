@@ -84,6 +84,12 @@ POST    /raum    create new Raum with key "name", "ort"
   
 GET     /kurs    get all Kurs  
 GET     /kurs/:fachbereich_id get Kurs by Fachbereich  
+GET     /kurs/dozent/id/:mitarbeiter_id     get Kurs by DozentId  
+localhost:3000/kurs/dozent/id/5  
+GET     /kurs/dozent/name/:mitarbeiterName  get Kurs by Dozent Name  
+localhost:3000/kurs/dozent/name/Louise%20Kunz  
+
+
 POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
 {  
     "name": "new Kurs",  
