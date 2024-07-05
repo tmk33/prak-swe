@@ -23,7 +23,7 @@ module.exports = (pool) => {
             // Gửi thông báo đến từng sinh viên (triển khai theo cách bạn muốn)
             for (const sinhVien of sinhVienRows) {
                 // ... (Gửi email, thông báo trong ứng dụng, ...)
-                console.log(sinhVien.email);
+                console.log("Thong bao cho sinh vien " + sinhVien.email + " Kurs " + kursId + " bi huy!");
             }
         }
 
@@ -43,7 +43,7 @@ module.exports = (pool) => {
 
             while (!giangVienPhuHop && minKursanzahl <= maxKursanzahl) {
               const giangVienResult = await client.query(`
-                SELECT id, kursanzahl
+                SELECT id, kursanzahl, email
                 FROM Mitarbeiter
                 WHERE rolle = 'Dozent' AND kursanzahl = $1
               `, [minKursanzahl]);
@@ -71,7 +71,7 @@ module.exports = (pool) => {
             }
             
 
-            return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio: khungGioPhuHop, ngay } : null;
+            return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio: khungGioPhuHop, ngay, email: giangVienPhuHop.email} : null;
           }
           
           
@@ -107,7 +107,7 @@ module.exports = (pool) => {
                     // Cập nhật khóa học với giảng viên thay thế
                     // thông báo cho giảng viên mới biết
                     ketQuaXuLy.push({ date: date, kursId: kurs.id, status: 'thayTheGiangVien', giangVienMoi: giangVienThayThe.giangVienId }); // Lưu kết quả
-
+                    console.log("Thong bao cho Dozent: " + giangVienThayThe.email + "dam nhiem Kurs " + kurs.id );
                 } else {
                     // Không tìm thấy giảng viên thay thế, hủy khóa học và thông báo cho sinh viên
                     await huyKhoaHocVaThongBaoSinhVien(client, kurs.fachbereich_id, kurs.id);
