@@ -13,19 +13,17 @@ module.exports = (pool) => {
         }
 
         // Hàm hủy khóa học và thông báo sinh viên
-        async function huyKhoaHocVaThongBaoSinhVien(client, kursId) {
-            // Xóa khóa học khỏi bảng Kurs
-            await client.query('DELETE FROM Kurs WHERE id = $1', [kursId]);
-
+        async function huyKhoaHocVaThongBaoSinhVien(client, fachbereichId, kursId) {
             // Lấy danh sách sinh viên đã đăng ký khóa học
             const { rows: sinhVienRows } = await client.query(
-                'SELECT student_id FROM Student_Kurs WHERE kurs_id = $1',
-                [kursId]
+                'SELECT id, name, email FROM student WHERE fachbereich_id = $1',
+                [fachbereichId]
             );
 
             // Gửi thông báo đến từng sinh viên (triển khai theo cách bạn muốn)
             for (const sinhVien of sinhVienRows) {
                 // ... (Gửi email, thông báo trong ứng dụng, ...)
+                console.log(sinhVien.email);
             }
         }
 
@@ -96,7 +94,7 @@ module.exports = (pool) => {
 
             // Tìm các khóa học của giảng viên trong ngày đã cho
             const { rows: kurseRows } = await client.query(
-            'SELECT id, startTime, endTime, fachbereich_id FROM Kurs WHERE mitarbeiter_id = $1 AND wochentag = $2',
+            'SELECT * FROM Kurs WHERE mitarbeiter_id = $1 AND wochentag = $2',
             [mitarbeiterId, ngay]
             );
 
@@ -112,7 +110,7 @@ module.exports = (pool) => {
 
                 } else {
                     // Không tìm thấy giảng viên thay thế, hủy khóa học và thông báo cho sinh viên
-                    //await huyKhoaHocVaThongBaoSinhVien(client, kurs.id);
+                    await huyKhoaHocVaThongBaoSinhVien(client, kurs.fachbereich_id, kurs.id);
                     ketQuaXuLy.push({ kursId: kurs.id, status: 'huyKurs' }); // Lưu kết quả
 
                 }
