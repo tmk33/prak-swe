@@ -58,21 +58,32 @@ Once you have completed the setup, you can start the server by running the follo
 
     ```bash
     npm start
-    
+
 
 ## 7. API
 The server will be running at http://localhost:[PORT] (e.g., http://localhost:3000).
 
 API Endpoints
 
-GET     /student    get all Student  
-POST    /student    create new Student  
- {  
-&nbsp;&nbsp;        "name": "Lian Tritten",  
-&nbsp;&nbsp;        "email": "test1@example.com",  
-&nbsp;&nbsp;        "geburtsdatum": "2000-09-24",  
-&nbsp;&nbsp;        "fachbereich_id": 1  
-}  
+# API Endpoints
+
+The server will be running at `http://localhost:[PORT]` (e.g., `http://localhost:3000`).
+
+## Student
+
+### GET /student
+Get all students
+
+### POST /student
+Create a new student
+```json
+{
+    "name": "Lian Tritten",
+    "email": "test1@example.com",
+    "geburtsdatum": "2000-09-24",
+    "fachbereich_id": 1
+}
+
 DELETE  /student/:id/:name  delete Student by ID and Name  
 PUT     /student/:id    update existing Student data (which value set null is unchange)  
   
