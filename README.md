@@ -88,7 +88,7 @@ Create a new student
 ### DELETE /student/:id/:name  
 Delete Student by ID and Name
 
-###PUT    /student/:id    
+### PUT    /student/:id    
 update existing Student data (which value set null is unchange)  
 ```json
 {  
@@ -99,89 +99,128 @@ update existing Student data (which value set null is unchange)
 }
 ```
   
-GET     /mitarbeiter     get all Mitarbeiter  
-POST    /mitarbeiter    create new Student  
- {
-&nbsp;&nbsp;        "name": "Johann Mandel",  
-&nbsp;&nbsp;        "email": "johann.mandel@example.com",  
-&nbsp;&nbsp;        "geburtsdatum": "1990-03-09",  
-&nbsp;&nbsp;        "rolle": "Dozent",  //oder Admin, Marketing  
+### GET     /mitarbeiter     
+get all Mitarbeiter  
+
+### POST    /mitarbeiter    
+create new Student  
+```json
+{
+    "name": "Johann Mandel",  
+    "email": "johann.mandel@example.com",  
+    "geburtsdatum": "1990-03-09",  
+    "rolle": "Dozent",  //oder Admin, Marketing  
 }
+```
   
-GET     /raum    get all Raum  
-POST    /raum    create new Raum with key "name", "ort"  
-{  
-&nbsp;&nbsp;    "name": "new Raum",  
-&nbsp;&nbsp;    ""ort": "Campus A"  
-}  
+### GET     /raum    
+get all Raum  
 
+### POST    /raum    
+create new Raum with key "name", "ort"  
+```json
+{  
+"name": "new Raum",  
+"ort": "Campus A"  
+}  
+```
   
-GET     /kurs    get all Kurs  
-GET     /kurs/:fachbereich_id get Kurs by Fachbereich  
-GET     /kurs/dozent/id/:mitarbeiter_id     get Kurs by DozentId  
+### GET     /kurs    
+get all Kurs  
+
+### GET     /kurs/:fachbereich_id 
+get Kurs by Fachbereich  
+
+### GET     /kurs/dozent/id/:mitarbeiter_id     
+get Kurs by DozentId  
 localhost:3000/kurs/dozent/id/5  
-GET     /kurs/dozent/name/:mitarbeiterName  get Kurs by Dozent Name  
+
+### GET     /kurs/dozent/name/:mitarbeiterName  
+get Kurs by Dozent Name  
 localhost:3000/kurs/dozent/name/Louise%20Kunz  
-DELETE  /kurs/:id   delete Kurs
 
-POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
-{  
-&nbsp;&nbsp;    "name": "new Kurs",  
-&nbsp;&nbsp;    "fachbereichId": 1  
-}  
+### DELETE  /kurs/:id   
+delete Kurs
 
-GET     /fachbereich    get all Fachbereich  
-POST    /fachbereich    create new Fachbereich with key "name"  
+### POST    /kurs/add   
+add new Kurs with key "name" and "fachbereichId"  
+```json
 {  
-&nbsp;&nbsp;    "name": "new Fachbereich",  
+    "name": "new Kurs",  
+    "fachbereichId": 1  
 }  
+```
 
-GET     /sonderveranstaltung    get all Sonderveranstaltung  
-POST    /sonderveranstaltung    create new Sonderveranstaltung  
-{  
-&nbsp;&nbsp;    "name": "Workshop Python",  
-&nbsp;&nbsp;    "date": "30.07.2024",  
-&nbsp;&nbsp;    "wochentag": "tue",  
-&nbsp;&nbsp;    "beschreibung":"Einfuehrung in die Programmiersprache Python",  
-&nbsp;&nbsp;    "dauertStunden":"4"  
-}  
-  
-POST    /krankmeldung   krankmeldung  
-{  
-&nbsp;&nbsp;    "mitarbeiterId": 5,  
-&nbsp;&nbsp;    "ngay": "wed",  
-&nbsp;&nbsp;    "date":"12-02-2024"  
-}  
+### GET     /fachbereich    
+get all Fachbereich  
 
-POST    /admin/login    admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
+### POST    /fachbereich    
+create new Fachbereich with key "name"  
+```json
 {  
-&nbsp;&nbsp;    "email": "admin@example.com",  //Below is the admin account  
-&nbsp;&nbsp;    "password": "testpassword"      //I have created in the database  
+    "name": "new Fachbereich",  
 }  
+```
+### GET     /sonderveranstaltung    
+get all Sonderveranstaltung  
 
+### POST    /sonderveranstaltung    
+create new Sonderveranstaltung  
+```json
+{  
+"name": "Workshop Python",  
+"date": "30.07.2024",  
+"wochentag": "tue",  
+"beschreibung":"Einfuehrung in die Programmiersprache Python",  
+"dauertStunden":"4"  
+}  
+```
+
+### POST    /krankmeldung   
+krankmeldung  
+```json
+{  
+"mitarbeiterId": 5,  
+"ngay": "wed",  
+"date":"12-02-2024"  
+}  
+```
+
+### POST    /admin/login    
+admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
+```json
+{  
+"email": "admin@example.com",  //Below is the admin account  
+"password": "testpassword"      //I have created in the database  
+}  
+```
 response  
+```json
 {  
-&nbsp;&nbsp;    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  eyJpZCI6NCwicm9sbGUiOiJBZG1pbiIsImlhdCI6MTcyMDI2MDA5MywiZXhwIjoxNzIwMjYzNjkzfQ.  eAf9t0ftwZZZrGUSnakShH_3VIQfYQck6g8RjWTIsXg"  
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  eyJpZCI6NCwicm9sbGUiOiJBZG1pbiIsImlhdCI6MTcyMDI2MDA5MywiZXhwIjoxNzIwMjYzNjkzfQ.  eAf9t0ftwZZZrGUSnakShH_3VIQfYQck6g8RjWTIsXg"  
 }   //put this token to Header of every endpoint API call  
-
+```
 example fetch API endpoint /kurs/add  
+```json
 fetch('/kurs/add', {  
-&nbsp;&nbsp;  method: 'POST',  
-&nbsp;&nbsp;  headers: {  
-&nbsp;&nbsp;&nbsp;&nbsp;    'Content-Type': 'application/json',  
-&nbsp;&nbsp;&nbsp;&nbsp;    'Authorization': `Bearer [token]`  
-&nbsp;&nbsp;  },  
-&nbsp;&nbsp;  body: JSON.stringify(courseData) // Dữ liệu khóa học  
+    method: 'POST',  
+    headers: {  
+    'Content-Type': 'application/json',  
+    'Authorization': `Bearer [token]`  
+    },  
+    body: JSON.stringify(courseData) // Dữ liệu khóa học  
 })  
 .then(response => { /* Xử lý phản hồi */ })  
 .catch(error => { /* Xử lý lỗi */ });  
+```
 
-
-PUT     /admin/:id/password     update admin password, need admin token  
+### PUT     /admin/:id/password     
+update admin password, need admin token  
+```json
 {  
-&nbsp;&nbsp;    "newPassword": "newPasswordForAdmin"  
+"newPassword": "newPasswordForAdmin"  
 }  
-
+```
 
 
 
