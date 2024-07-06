@@ -50,35 +50,35 @@ API Endpoints
 GET     /student    get all Student  
 POST    /student    create new Student  
  {  
-&nbsp;        "name": "Lian Tritten",  
-&nbsp;        "email": "test1@example.com",  
-&nbsp;        "geburtsdatum": "2000-09-24",  
-&nbsp;        "fachbereich_id": 1  
+&nbsp;&nbsp;        "name": "Lian Tritten",  
+&nbsp;&nbsp;        "email": "test1@example.com",  
+&nbsp;&nbsp;        "geburtsdatum": "2000-09-24",  
+&nbsp;&nbsp;        "fachbereich_id": 1  
 }  
 DELETE  /student/:id/:name  delete Student by ID and Name  
 PUT     /student/:id    update existing Student data (which value set null is unchange)  
   
 {  
-  "name": null,     //name unchange  
-  "email": null,    //email unchange  
-  "geburtsdatum": null,     //geburtsdatum unchange  
-  "fachbereich_id": 2       //fachbereich_id change to 2  
+&nbsp;&nbsp;  "name": null,     //name unchange  
+&nbsp;&nbsp;  "email": null,    //email unchange  
+&nbsp;&nbsp;  "geburtsdatum": null,     //geburtsdatum unchange  
+&nbsp;&nbsp;  "fachbereich_id": 2       //fachbereich_id change to 2  
 }  
   
 GET     /mitarbeiter     get all Mitarbeiter  
 POST    /mitarbeiter    create new Student  
  {
-        "name": "Johann Mandel",  
-        "email": "johann.mandel@example.com",  
-        "geburtsdatum": "1990-03-09",  
-        "rolle": "Dozent",  //oder Admin, Marketing  
+&nbsp;&nbsp;        "name": "Johann Mandel",  
+&nbsp;&nbsp;        "email": "johann.mandel@example.com",  
+&nbsp;&nbsp;        "geburtsdatum": "1990-03-09",  
+&nbsp;&nbsp;        "rolle": "Dozent",  //oder Admin, Marketing  
 }
   
 GET     /raum    get all Raum  
 POST    /raum    create new Raum with key "name", "ort"  
 {  
-    "name": "new Raum",  
-    ""ort": "Campus A"  
+&nbsp;&nbsp;    "name": "new Raum",  
+&nbsp;&nbsp;    ""ort": "Campus A"  
 }  
 
   
@@ -92,44 +92,44 @@ DELETE  /kurs/:id   delete Kurs
 
 POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
 {  
-    "name": "new Kurs",  
-    "fachbereichId": 1  
+&nbsp;&nbsp;    "name": "new Kurs",  
+&nbsp;&nbsp;    "fachbereichId": 1  
 }  
 
 GET     /fachbereich    get all Fachbereich  
 POST    /fachbereich    create new Fachbereich with key "name"  
 {  
-    "name": "new Fachbereich",  
+&nbsp;&nbsp;    "name": "new Fachbereich",  
 }  
 
 GET     /sonderveranstaltung    get all Sonderveranstaltung 
   
 POST    /krankmeldung   krankmeldung  
 {  
-    "mitarbeiterId": 5,  
-    "ngay": "wed",  
-    "date":"12-02-2024"  
+&nbsp;&nbsp;    "mitarbeiterId": 5,  
+&nbsp;&nbsp;    "ngay": "wed",  
+&nbsp;&nbsp;    "date":"12-02-2024"  
 }  
 
 POST    /admin/login    admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
 {  
-    "email": "admin@example.com",  //Below is the admin account  
-    "password": "testpassword"      //I have created in the database  
+&nbsp;&nbsp;    "email": "admin@example.com",  //Below is the admin account  
+&nbsp;&nbsp;    "password": "testpassword"      //I have created in the database  
 }  
 
 response  
 {  
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  eyJpZCI6NCwicm9sbGUiOiJBZG1pbiIsImlhdCI6MTcyMDI2MDA5MywiZXhwIjoxNzIwMjYzNjkzfQ.  eAf9t0ftwZZZrGUSnakShH_3VIQfYQck6g8RjWTIsXg"  
+&nbsp;&nbsp;    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  eyJpZCI6NCwicm9sbGUiOiJBZG1pbiIsImlhdCI6MTcyMDI2MDA5MywiZXhwIjoxNzIwMjYzNjkzfQ.  eAf9t0ftwZZZrGUSnakShH_3VIQfYQck6g8RjWTIsXg"  
 }   //put this token to Header of every endpoint API call  
 
 example fetch API endpoint /kurs/add  
 fetch('/kurs/add', {  
-  method: 'POST',  
-  headers: {  
-    'Content-Type': 'application/json',  
-    'Authorization': `Bearer [token]`  
-  },  
-  body: JSON.stringify(courseData) // Dữ liệu khóa học  
+&nbsp;&nbsp;  method: 'POST',  
+&nbsp;&nbsp;  headers: {  
+&nbsp;&nbsp;&nbsp;&nbsp;    'Content-Type': 'application/json',  
+&nbsp;&nbsp;&nbsp;&nbsp;    'Authorization': `Bearer [token]`  
+&nbsp;&nbsp;  },  
+&nbsp;&nbsp;  body: JSON.stringify(courseData) // Dữ liệu khóa học  
 })  
 .then(response => { /* Xử lý phản hồi */ })  
 .catch(error => { /* Xử lý lỗi */ });  
@@ -137,7 +137,7 @@ fetch('/kurs/add', {
 
 PUT     /admin/:id/password     update admin password, need admin token  
 {  
-    "newPassword": "newPasswordForAdmin"  
+&nbsp;&nbsp;    "newPassword": "newPasswordForAdmin"  
 }  
 
 
