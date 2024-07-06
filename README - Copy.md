@@ -1,27 +1,20 @@
-# Praktikum Software Engineering Project
+It is built using:
 
-This project is a backend API for managing students, courses, staff, and rooms. It's designed to be used as part of a software engineering internship or course.
+Express.js: A minimalist and flexible web framework for Node.js.  
+Node.js: A server-side JavaScript runtime environment.  
+PostgreSQL: A powerful and scalable open-source relational database management system.
 
-## Table of Contents
-- [Built With](#built-with)
-- [Installation and Setup](#installation-and-setup)
-- [API Endpoints](#api-endpoints)
+Installation and Setup
+1. Prerequisites:
 
-## Built With
-- **Express.js:** A fast and minimalist web framework for Node.js
-- **Node.js:** A JavaScript runtime environment
-- **PostgreSQL:** A powerful open-source relational database system
+Node.js and npm: Download and install from https://nodejs.org/.
+PostgreSQL: Download and install from https://www.postgresql.org/. Make sure you remember your PostgreSQL username, password, and database name.
 
-## Installation and Setup
+2. Clone the repository:
 
-1. **Prerequisites:**
-   - **Node.js and npm:** Download and install from [https://nodejs.org/](https://nodejs.org/).
-   - **PostgreSQL:** Download and install from [https://www.postgresql.org/](https://www.postgresql.org/). Note your PostgreSQL username, password, and database name.
-
-2. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/tmk33/prak-swe.git](https://github.com/tmk33/prak-swe.git)
-   cd prak-swe 
+Bash
+git clone https://github.com/tmk33/prak-swe.git
+cd [project-directory-name]
 
 3. Install dependencies:
 
@@ -37,7 +30,6 @@ PGHOST=[Your PostgreSQL host address (e.g., localhost)]
 PGDATABASE=[Your PostgreSQL database name]  
 PGPASSWORD=[Your PostgreSQL password]  
 PGPORT=5432 # default port  
-JWT_SECRET=testpassword
 
 5. Restoring Database from Backup (myproject.sql)
 
