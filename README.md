@@ -120,8 +120,8 @@ get all Raum
 create new Raum with key "name", "ort"  
 ```json
 {  
-"name": "new Raum",  
-"ort": "Campus A"  
+    "name": "new Raum",  
+    "ort": "Campus A"  
 }  
 ```
   
@@ -168,11 +168,11 @@ get all Sonderveranstaltung
 create new Sonderveranstaltung  
 ```json
 {  
-"name": "Workshop Python",  
-"date": "30.07.2024",  
-"wochentag": "tue",  
-"beschreibung":"Einfuehrung in die Programmiersprache Python",  
-"dauertStunden":"4"  
+    "name": "Workshop Python",  
+    "date": "30.07.2024",  
+    "wochentag": "tue",  
+    "beschreibung":"Einfuehrung in die Programmiersprache Python",  
+    "dauertStunden":"4"  
 }  
 ```
 
@@ -180,9 +180,9 @@ create new Sonderveranstaltung
 krankmeldung  
 ```json
 {  
-"mitarbeiterId": 5,  
-"ngay": "wed",  
-"date":"12-02-2024"  
+    "mitarbeiterId": 5,  
+    "ngay": "wed",  
+    "date":"12-02-2024"  
 }  
 ```
 
@@ -190,8 +190,8 @@ krankmeldung
 admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
 ```json
 {  
-"email": "admin@example.com",  //Below is the admin account  
-"password": "testpassword"      //I have created in the database  
+    "email": "admin@example.com",  //Below is the admin account  
+    "password": "testpassword"      //I have created in the database  
 }  
 ```
 response  
@@ -201,7 +201,7 @@ response
 }   //put this token to Header of every endpoint API call  
 ```
 example fetch API endpoint /kurs/add  
-```json
+```javascript
 fetch('/kurs/add', {  
     method: 'POST',  
     headers: {  
@@ -218,7 +218,7 @@ fetch('/kurs/add', {
 update admin password, need admin token  
 ```json
 {  
-"newPassword": "newPasswordForAdmin"  
+    "newPassword": "newPasswordForAdmin"  
 }  
 ```
 
