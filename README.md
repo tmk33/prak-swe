@@ -50,10 +50,10 @@ API Endpoints
 GET     /student    get all Student  
 POST    /student    create new Student  
  {  
-    "name": "Lian Tritten",  
-        "email": "test1@example.com",  
-        "geburtsdatum": "2000-09-24",  
-        "fachbereich_id": 1  
+&nbsp;        "name": "Lian Tritten",  
+&nbsp;        "email": "test1@example.com",  
+&nbsp;        "geburtsdatum": "2000-09-24",  
+&nbsp;        "fachbereich_id": 1  
 }  
 DELETE  /student/:id/:name  delete Student by ID and Name  
 PUT     /student/:id    update existing Student data (which value set null is unchange)  
