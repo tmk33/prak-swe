@@ -102,7 +102,15 @@ POST    /fachbereich    create new Fachbereich with key "name"
 &nbsp;&nbsp;    "name": "new Fachbereich",  
 }  
 
-GET     /sonderveranstaltung    get all Sonderveranstaltung 
+GET     /sonderveranstaltung    get all Sonderveranstaltung  
+POST    /sonderveranstaltung    create new Sonderveranstaltung  
+{  
+&nbsp;&nbsp;    "name": "Workshop Python",  
+&nbsp;&nbsp;    "date": "30.07.2024",  
+&nbsp;&nbsp;    "wochentag": "tue",  
+&nbsp;&nbsp;    "beschreibung":"Einfuehrung in die Programmiersprache Python",  
+&nbsp;&nbsp;    "dauertStunden":"4"  
+}  
   
 POST    /krankmeldung   krankmeldung  
 {  
