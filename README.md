@@ -117,6 +117,24 @@ POST    /admin/login    admin login to get token, this token use to access endpo
     "password": "testpassword"      //I have created in the database  
 }  
 
+response  
+{  
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  eyJpZCI6NCwicm9sbGUiOiJBZG1pbiIsImlhdCI6MTcyMDI2MDA5MywiZXhwIjoxNzIwMjYzNjkzfQ.  eAf9t0ftwZZZrGUSnakShH_3VIQfYQck6g8RjWTIsXg"  
+}   //put this token to Header of every endpoint API call  
+
+example fetch API endpoint /kurs/add  
+fetch('/kurs/add', {  
+  method: 'POST',  
+  headers: {  
+    'Content-Type': 'application/json',  
+    'Authorization': `Bearer [token]`  
+  },  
+  body: JSON.stringify(courseData) // Dữ liệu khóa học  
+})  
+.then(response => { /* Xử lý phản hồi */ })  
+.catch(error => { /* Xử lý lỗi */ });  
+
+
 PUT     /admin/:id/password     update admin password, need admin token  
 {  
     "newPassword": "newPasswordForAdmin"  

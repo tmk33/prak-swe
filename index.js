@@ -2,6 +2,8 @@ const express = require('express');
 const { Pool } = require('pg'); 
 require('dotenv').config();
 
+const authenticateAdmin = require('./middleware/auth');
+
 const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt');
@@ -20,25 +22,6 @@ const pool = new Pool({
 const generateVeranstaltung = require('./utils/generateVeranstaltung')(pool); // Truyền pool vào module
 const krankMeldung = require('./utils/krankMeldung')(pool); // Truyền pool vào module
 
-function authenticateAdmin(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1]; // Lấy token từ header
-    
-    if (!token) {
-      return res.status(401).json({ error: 'No tokens' });
-    }
-  
-    try {
-      const decoded = jwt.verify(token, jwtSecret);
-      if (decoded.rolle === 'Admin') {
-        req.mitarbeiter = decoded; // Lưu thông tin nhân viên vào req
-        next();
-      } else {
-        return res.status(403).json({ error: 'Unauthorized' });
-      }
-    } catch (err) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-  }
 
 // Sử dụng middleware để phân tích JSON
 app.use(express.json());
@@ -62,8 +45,8 @@ app.use('/kurs', kursRoutes(pool));
 const sonderveranstaltungRoutes = require('./routes/sonderveranstaltungRoutes');
 app.use('/sonderveranstaltung', sonderveranstaltungRoutes(pool));
 
-app.post('/kurs/add', authenticateAdmin, generateVeranstaltung.generateVeranstaltung);
-app.post('/krankmeldung', authenticateAdmin, krankMeldung.krankMeldung);
+app.post('/kurs/add', authenticateAdmin.authenticateAdmin, generateVeranstaltung.generateVeranstaltung);
+app.post('/krankmeldung', authenticateAdmin.authenticateAdmin, krankMeldung.krankMeldung);
 
 app.post('/admin/login', async (req, res) => {
     const { email, password } = req.body;
@@ -89,7 +72,7 @@ app.post('/admin/login', async (req, res) => {
     }
   });
 
-app.put('/admin/:id/password', authenticateAdmin, async (req, res) => { // Chỉ admin mới được phép đổi mật khẩu
+app.put('/admin/:id/password', authenticateAdmin.authenticateAdmin, async (req, res) => { // Chỉ admin mới được phép đổi mật khẩu
     const { id } = req.params;
     const { newPassword } = req.body;
   
