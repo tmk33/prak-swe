@@ -39,12 +39,18 @@ PGPASSWORD=[Your PostgreSQL password]
 PGPORT=5432 # default port  
 JWT_SECRET=testpassword
 
-5. Restoring Database from Backup (myproject.sql)
+## 5. Restore Database from Backup (Optional)
 
-- Navigate to the directory where your myproject.sql file is located.
-- Execute the following command, replacing placeholders with your actual database information:  
-psql -U [Your PostgreSQL username] [Your database name] < myproject.sql  
-example: psql -U postgres myproject < myproject.sql
+If you have a PostgreSQL database backup file (usually with the `.sql` extension), you can restore it to your database:
+
+1. **Navigate:** Open your terminal or command prompt and go to the directory where your backup file is located.
+
+2. **Restore:** Run the following command, replacing the placeholders with your actual database information:
+
+   ```bash
+   psql -U [Your PostgreSQL username] [Your database name] < [your_backup_file.sql]
+
+  example: psql -U postgres myproject < myproject.sql
 
 6. Start the server:
 
