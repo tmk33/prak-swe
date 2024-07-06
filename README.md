@@ -88,7 +88,7 @@ GET     /kurs/dozent/id/:mitarbeiter_id     get Kurs by DozentId
 localhost:3000/kurs/dozent/id/5  
 GET     /kurs/dozent/name/:mitarbeiterName  get Kurs by Dozent Name  
 localhost:3000/kurs/dozent/name/Louise%20Kunz  
-
+DELETE  /kurs/:id   delete Kurs
 
 POST    /kurs/add   add new Kurs with key "name" and "fachbereichId"  
 {  

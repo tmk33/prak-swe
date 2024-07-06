@@ -39,4 +39,32 @@ exports.getKurseByFachbereich = (pool) => async (req, res) => {
     }
   };
 
+  exports.deleteKursByID = (pool) => async (req, res) => {
+    const kursId = req.params.id;
+
+    try {
+      // 1. Lấy thông tin khóa học
+      const kursResult = await pool.query('SELECT mitarbeiter_id, fachbereich_id, wochentag FROM Kurs WHERE id = $1', [kursId]);
+      const kurs = kursResult.rows[0];
+      if (!kurs) {
+        return res.status(404).json({ error: 'No Kurs found' });
+      }
+
+      // 2. Xóa khóa học
+      await pool.query('DELETE FROM Kurs WHERE id = $1', [kursId]);
+
+      // 3. Giảm Kursanzahl của Mitarbeiter
+      await pool.query('UPDATE Mitarbeiter SET kursanzahl = kursanzahl - 1 WHERE id = $1', [kurs.mitarbeiter_id]);
+
+      // 4. Giảm số tiết học trong Wochentagfachbereich
+      const wochentagColumn = kurs.wochentag; // 'mon', 'tue', etc.
+      await pool.query(`UPDATE Wochentagfachbereich SET ${wochentagColumn} = ${wochentagColumn} - 1 WHERE fachbereich_id = $1`, [kurs.fachbereich_id]);
+
+      res.json({ message: "Kurs ID " + kursId + " has been removed" });
+    } catch (err) {
+      console.error('Lỗi xóa khóa học:', err);
+      res.status(500).json({ error: 'Lỗi server' });
+    }
+  };
+
 

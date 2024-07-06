@@ -26,6 +26,7 @@ class Kurs {
           );
         return result.rows;
     }
+
   
   }
   
