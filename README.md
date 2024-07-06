@@ -84,14 +84,17 @@ Create a new student
     "fachbereich_id": 1
 }
 
-DELETE  /student/:id/:name  delete Student by ID and Name  
-PUT     /student/:id    update existing Student data (which value set null is unchange)  
-  
+### DELETE /student/:id/:name  
+Delete Student by ID and Name
+
+###PUT    /student/:id    
+update existing Student data (which value set null is unchange)  
+```json
 {  
-&nbsp;&nbsp;  "name": null,     //name unchange  
-&nbsp;&nbsp;  "email": null,    //email unchange  
-&nbsp;&nbsp;  "geburtsdatum": null,     //geburtsdatum unchange  
-&nbsp;&nbsp;  "fachbereich_id": 2       //fachbereich_id change to 2  
+    "name": null,     //name unchange  
+    "email": null,    //email unchange  
+    "geburtsdatum": null,     //geburtsdatum unchange  
+    "fachbereich_id": 2       //fachbereich_id change to 2  
 }  
   
 GET     /mitarbeiter     get all Mitarbeiter  
