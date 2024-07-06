@@ -83,7 +83,7 @@ Create a new student
     "geburtsdatum": "2000-09-24",
     "fachbereich_id": 1
 }
-...
+```
 
 ### DELETE /student/:id/:name  
 Delete Student by ID and Name
@@ -96,7 +96,8 @@ update existing Student data (which value set null is unchange)
     "email": null,    //email unchange  
     "geburtsdatum": null,     //geburtsdatum unchange  
     "fachbereich_id": 2       //fachbereich_id change to 2  
-}...
+}
+```
   
 GET     /mitarbeiter     get all Mitarbeiter  
 POST    /mitarbeiter    create new Student  
