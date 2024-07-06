@@ -11,6 +11,12 @@ class Fachbereich {
     'INSERT INTO fachbereich (name) VALUES ($1) RETURNING *',
     [name]
   );
+
+    await pool.query(
+        `INSERT INTO Wochentagfachbereich (fachbereich_id, mon, tue, wed, thu, fri)
+        VALUES ($1, 0, 0, 0, 0, 0)`,
+        [result.rows[0].id]
+    );
       return result.rows[0];
 
     }

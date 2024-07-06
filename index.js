@@ -94,10 +94,12 @@ async function generatePasswordHash(password) {
     return hash;
 }
 
-//const password = 'adminpass'; // Thay bằng mật khẩu bạn muốn đặt
-//generatePasswordHash(password)
-//    .then(hash => console.log("This is Hash password for Admin id 4 for testing purpose " + hash))
-//    .catch(err => console.error('Error:', err));
+/*
+const password = 'admin'; // Thay bằng mật khẩu bạn muốn đặt
+generatePasswordHash(password)
+    .then(hash => console.log("This is Hash password for Admin id 1 for testing purpose " + hash))
+    .catch(err => console.error('Error:', err));
+*/
 
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);
