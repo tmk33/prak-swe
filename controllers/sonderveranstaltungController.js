@@ -10,5 +10,16 @@ exports.getAllSonderveranstaltung = (pool) => async (req, res) => {
 };
 
 exports.addSonderveranstaltung = (pool) => async (req, res) => {
-  // ... (Thêm logic xử lý cho việc thêm sinh viên)
+    try {
+      // Kiểm tra định dạng ngày tháng
+      const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+      if (!dateRegex.test(req.body.date)) {
+        return res.status(400).json({ error: 'Định dạng ngày tháng không hợp lệ' });
+      }
+  
+      const newSonderveranstaltungId = await Sonderveranstaltung.add(pool, req.body);
+      res.json({ message: 'Thêm Sonderveranstaltung thành công!', id: newSonderveranstaltungId });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
 };
