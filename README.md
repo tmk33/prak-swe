@@ -111,4 +111,17 @@ POST    /krankmeldung   krankmeldung
     "date":"12-02-2024"  
 }  
 
+POST    /admin/login    admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
+{  
+    "email": "admin@example.com",  //Below is the admin account  
+    "password": "testpassword"      //I have created in the database  
+}  
+
+PUT     /admin/:id/password     update admin password, need admin token  
+{  
+    "newPassword": "newPasswordForAdmin"  
+}  
+
+
+
 
