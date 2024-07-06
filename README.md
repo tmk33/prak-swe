@@ -82,7 +82,8 @@ Create a new student
     "email": "test1@example.com",
     "geburtsdatum": "2000-09-24",
     "fachbereich_id": 1
-}...
+}
+...
 
 ### DELETE /student/:id/:name  
 Delete Student by ID and Name
