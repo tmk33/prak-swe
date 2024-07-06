@@ -50,7 +50,7 @@ API Endpoints
 GET     /student    get all Student  
 POST    /student    create new Student  
  {  
-        "name": "Lian Tritten",  
+    "name": "Lian Tritten",  
         "email": "test1@example.com",  
         "geburtsdatum": "2000-09-24",  
         "fachbereich_id": 1  
