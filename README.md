@@ -52,10 +52,13 @@ If you have a PostgreSQL database backup file (usually with the `.sql` extension
 
   example: psql -U postgres myproject < myproject.sql
 
-6. Start the server:
+## 6. Start the Server
 
-cmd:
+Once you have completed the setup, you can start the server by running the following command in your terminal:
+
+```bash
 npm start
+
 
 The server will be running at http://localhost:[PORT] (e.g., http://localhost:3000).
 
