@@ -23,14 +23,14 @@ This project is a backend API for managing students, courses, staff, and rooms. 
    git clone [https://github.com/tmk33/prak-swe.git](https://github.com/tmk33/prak-swe.git)
    cd prak-swe 
 
-3. Install dependencies:
+3. **Install dependencies:**
+   ```bash
+   npm install
 
-cmd:
-npm install 
 
-4. Setup .env file:
+## 4. Setup .env file:
 
-Create a .env file in the project root directory and fill in the following information:
+Create a `.env` file in the project root directory and add the following information:
 
 PGUSER=[Your PostgreSQL username]  
 PGHOST=[Your PostgreSQL host address (e.g., localhost)]  
