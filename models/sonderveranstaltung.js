@@ -46,6 +46,12 @@ class Sonderveranstaltung {
             [name, startTimeStamp, endTimeStamp, beschreibung, suitableDozent.id, availableRaum.id]
         );
 
+        // Tăng sonderkursanzahl của giảng viên
+        await pool.query(
+            'UPDATE Mitarbeiter SET sonderkursanzahl = sonderkursanzahl + 1 WHERE id = $1',
+            [suitableDozent.id]
+        );
+
         return result.rows[0];
 
       } catch (error) {
