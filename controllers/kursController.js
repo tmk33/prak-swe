@@ -39,6 +39,4 @@ exports.getKurseByFachbereich = (pool) => async (req, res) => {
     }
   };
 
-exports.addKurs = (pool) => async (req, res) => {
-  // ... (Thêm logic xử lý cho việc thêm sinh viên)
-};
+

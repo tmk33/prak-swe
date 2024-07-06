@@ -27,9 +27,6 @@ class Kurs {
         return result.rows;
     }
   
-    static async add(pool, kursData) {
-      // Thêm logic để chèn dữ liệu studentData vào bảng students
-    }
   }
   
   module.exports = Kurs;
