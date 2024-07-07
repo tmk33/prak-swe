@@ -1,6 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg'); 
 require('dotenv').config();
+const cors = require('cors');
 
 const authenticateAdmin = require('./middleware/auth');
 
@@ -25,6 +26,12 @@ const krankMeldung = require('./utils/krankMeldung')(pool); // Truyền pool và
 
 // Sử dụng middleware để phân tích JSON
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:3001', // Cho phép yêu cầu từ frontend
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true // Cho phép gửi cookie và thông tin xác thực
+}));
 
 // Import và sử dụng các routes
 const studentRoutes = require('./routes/studentRoutes');
