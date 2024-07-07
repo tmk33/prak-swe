@@ -106,6 +106,8 @@ CREATE TABLE public.mitarbeiter (
     geburtsdatum date,
     rolle character varying(20),
     kursanzahl integer DEFAULT 0,
+    sonderkursanzahl integer DEFAULT 0,
+    password_hash text,
     CONSTRAINT mitarbeiter_rolle_check CHECK (((rolle)::text = ANY ((ARRAY['Admin'::character varying, 'Dozent'::character varying, 'Marketing'::character varying])::text[])))
 );
 
@@ -179,7 +181,9 @@ CREATE TABLE public.sonderveranstaltung (
     name character varying(255) NOT NULL,
     starttime timestamp without time zone,
     endtime timestamp without time zone,
-    beschreibung text
+    beschreibung text,
+    mitarbeiter_id integer,
+    raum_id integer
 );
 
 
@@ -350,8 +354,8 @@ ALTER TABLE ONLY public.wochentagfachbereich ALTER COLUMN id SET DEFAULT nextval
 
 COPY public.fachbereich (id, name) FROM stdin;
 1	Informatik
-2	Design
-3	Maschinenbau
+2	Elektronik
+3	Design
 \.
 
 
@@ -360,36 +364,12 @@ COPY public.fachbereich (id, name) FROM stdin;
 --
 
 COPY public.kurs (id, name, wochentag, starttime, endtime, mitarbeiter_id, raum_id, fachbereich_id) FROM stdin;
-1	Software Engineering	mon	08:00:00	10:00:00	1	1	1
-3	Theoretische Informatik	mon	10:00:00	12:00:00	1	3	1
-2	Robotik	mon	10:00:00	12:00:00	2	2	3
-5	Technische Englisch	wed	08:00:00	10:00:00	2	1	1
-6	Technische Englisch 2	wed	10:00:00	12:00:00	2	1	3
-7	Technische Englisch 2	tue	10:00:00	12:00:00	2	1	3
-8	Datennetze	tue	08:00:00	10:00:00	1	1	3
-9	Datennetze	tue	12:00:00	14:00:00	1	1	2
-10	Datennetze	tue	10:00:00	12:00:00	1	1	2
-11	Datennetze	wed	10:00:00	12:00:00	1	1	2
-12	Datennetze	wed	10:00:00	12:00:00	5	1	2
-13	Datennetze	thu	08:00:00	10:00:00	5	1	2
-14	Datennetze	thu	10:00:00	12:00:00	5	1	3
-15	Datennetze	thu	10:00:00	12:00:00	5	2	3
-16	Software Engineering 2	tue	12:00:00	14:00:00	2	2	3
-17	Software Engineering 2	thu	10:00:00	12:00:00	1	3	2
-18	Software Engineering 2	wed	10:00:00	12:00:00	8	2	1
-19	Software Engineering 2	wed	12:00:00	14:00:00	1	1	\N
-20	Software Engineering 3	wed	12:00:00	14:00:00	2	2	\N
-22	Software Engineering 4	tue	14:00:00	16:00:00	8	1	\N
-24	Software Engineering 4	tue	14:00:00	16:00:00	1	2	\N
-25	Software Engineering 4	tue	14:00:00	16:00:00	2	3	\N
-26	Software Engineering 4	tue	14:00:00	16:00:00	5	\N	\N
-28	Software Engineering 4	tue	16:00:00	18:00:00	8	1	\N
-29	Software Engineering 4	tue	16:00:00	18:00:00	1	2	\N
-30	Software Engineering 4	tue	16:00:00	18:00:00	2	3	3
-31	Software Engineering 4	wed	08:00:00	10:00:00	8	2	3
-32	Software Engineering 4	wed	12:00:00	14:00:00	8	3	3
-33	Software Engineering 4	thu	12:00:00	14:00:00	1	1	2
-34	Software Engineering 4	fri	08:00:00	10:00:00	2	1	2
+1	Software Engineering	mon	08:00:00	10:00:00	3	1	1
+2	Datenanalyse	tue	08:00:00	10:00:00	4	1	1
+3	Datennetze	wed	08:00:00	10:00:00	3	1	1
+4	Data Science	thu	08:00:00	10:00:00	4	1	1
+5	Cloud Computing	fri	08:00:00	10:00:00	3	1	1
+6	Web Engineering	mon	10:00:00	12:00:00	4	1	1
 \.
 
 
@@ -397,15 +377,11 @@ COPY public.kurs (id, name, wochentag, starttime, endtime, mitarbeiter_id, raum_
 -- Data for Name: mitarbeiter; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle, kursanzahl) FROM stdin;
-3	Johann Mandel	johann.mandel@example.com	1990-03-10	Marketing	0
-4	Waldemar Rose	waldemar.rose@example.com	1975-12-03	Admin	0
-6	Anna Schmidt	schmidt@email.de	1990-12-22	Admin	0
-7	Lukas Mueller	mueller@email.de	1988-08-10	Marketing	0
-5	Max Mustermann	mustermann@email.de	1985-03-15	Dozent	4
-8	Babette Reis	babette.reis@example.com	1981-05-14	Dozent	4
-1	Babette Mein	babette.mein@example.com	1980-05-15	Dozent	4
-2	Louise Kunz	louise.kunz@example.com	1985-08-22	Dozent	4
+COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle, kursanzahl, sonderkursanzahl, password_hash) FROM stdin;
+1	Max Mustermann	admin@beispiel.de	1988-05-12	Admin	0	0	$2b$10$dzrG8v090ww3CnRxV5nT7e.RCDk1WeUP.Vwuu9btWMZYP59sUykXq
+2	Anna Schmidt	anna.schmidt@beispiel.de	1992-09-28	Marketing	0	0	
+4	Peter Mueller	peter.mueller@beispiel.de	1975-02-03	Dozent	3	0	
+3	Thanh Khong	thanh.khong@beispiel.de	1997-09-28	Dozent	3	1	
 \.
 
 
@@ -414,9 +390,18 @@ COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle, kursanzahl) FROM 
 --
 
 COPY public.raum (id, name, ort) FROM stdin;
-1	A101	Campus A
-2	B205	Campus B
-3	A303	Campus A
+1	A102	Campus A
+2	A101	Campus A
+3	A103	Campus A
+4	A104	Campus A
+5	A201	Campus A
+6	A202	Campus A
+7	A203	Campus A
+8	A204	Campus A
+9	B101	Campus B
+10	B102	Campus B
+11	B103	Campus B
+12	B104	Campus B
 \.
 
 
@@ -424,9 +409,8 @@ COPY public.raum (id, name, ort) FROM stdin;
 -- Data for Name: sonderveranstaltung; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.sonderveranstaltung (id, name, starttime, endtime, beschreibung) FROM stdin;
-1	Workshop Python	2024-08-10 14:00:00	2024-08-10 17:00:00	Einfuehrung in die Programmiersprache Python
-2	Workshop Design	2024-09-22 09:00:00	2024-09-22 12:00:00	Design
+COPY public.sonderveranstaltung (id, name, starttime, endtime, beschreibung, mitarbeiter_id, raum_id) FROM stdin;
+1	Workshop Python	2024-07-30 08:00:00	2024-07-30 12:00:00	Einfuehrung in die Programmiersprache Python	3	2
 \.
 
 
@@ -435,11 +419,7 @@ COPY public.sonderveranstaltung (id, name, starttime, endtime, beschreibung) FRO
 --
 
 COPY public.student (id, name, email, geburtsdatum, fachbereich_id) FROM stdin;
-1	Lian Tritten	test1@example.com	2000-09-25	1
-2	Ulla Shriver	test2@example.com	2001-06-12	2
-3	Anne Bedrosian	test4@example.com	2002-03-20	3
-4	Lisbeth Gaertner	test3@example.com	1999-11-08	1
-6	Sascha Krantz	sascha.krantz@example.com	2002-05-12	2
+1	Lian Tritten	lian.tritten@example.com	2000-09-24	1
 \.
 
 
@@ -448,9 +428,6 @@ COPY public.student (id, name, email, geburtsdatum, fachbereich_id) FROM stdin;
 --
 
 COPY public.student_sonderveranstaltung (student_id, sonderveranstaltung_id) FROM stdin;
-1	1
-3	1
-2	2
 \.
 
 
@@ -459,9 +436,9 @@ COPY public.student_sonderveranstaltung (student_id, sonderveranstaltung_id) FRO
 --
 
 COPY public.wochentagfachbereich (id, fachbereich_id, mon, tue, wed, thu, fri) FROM stdin;
-1	1	4	1	0	0	0
-3	3	5	2	3	2	2
-2	2	2	2	2	2	2
+2	2	0	0	0	0	0
+3	3	0	0	0	0	0
+1	1	2	1	1	1	1
 \.
 
 
@@ -476,35 +453,35 @@ SELECT pg_catalog.setval('public.fachbereich_id_seq', 3, true);
 -- Name: kurs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.kurs_id_seq', 34, true);
+SELECT pg_catalog.setval('public.kurs_id_seq', 6, true);
 
 
 --
 -- Name: mitarbeiter_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mitarbeiter_id_seq', 8, true);
+SELECT pg_catalog.setval('public.mitarbeiter_id_seq', 4, true);
 
 
 --
 -- Name: raum_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.raum_id_seq', 3, true);
+SELECT pg_catalog.setval('public.raum_id_seq', 12, true);
 
 
 --
 -- Name: sonderveranstaltung_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sonderveranstaltung_id_seq', 2, true);
+SELECT pg_catalog.setval('public.sonderveranstaltung_id_seq', 1, true);
 
 
 --
 -- Name: student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.student_id_seq', 7, true);
+SELECT pg_catalog.setval('public.student_id_seq', 1, true);
 
 
 --
@@ -624,6 +601,22 @@ ALTER TABLE ONLY public.kurs
 
 ALTER TABLE ONLY public.kurs
     ADD CONSTRAINT kurs_raum_id_fkey FOREIGN KEY (raum_id) REFERENCES public.raum(id);
+
+
+--
+-- Name: sonderveranstaltung sonderveranstaltung_mitarbeiter_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sonderveranstaltung
+    ADD CONSTRAINT sonderveranstaltung_mitarbeiter_id_fkey FOREIGN KEY (mitarbeiter_id) REFERENCES public.mitarbeiter(id);
+
+
+--
+-- Name: sonderveranstaltung sonderveranstaltung_raum_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sonderveranstaltung
+    ADD CONSTRAINT sonderveranstaltung_raum_id_fkey FOREIGN KEY (raum_id) REFERENCES public.raum(id);
 
 
 --

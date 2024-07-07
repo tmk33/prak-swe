@@ -50,7 +50,7 @@ If you have a PostgreSQL database backup file (usually with the `.sql` extension
    ```bash
    psql -U [Your PostgreSQL username] [Your database name] < [your_backup_file.sql]
 
-  example: psql -U postgres myproject < myproject.sql
+  example: psql -U postgres swe < swe.sql
 
 ## 6. Start the Server
 
