@@ -205,8 +205,8 @@ krankmeldung
 admin login to get token, this token use to access endpoints like /kurs/add, /krankmeldung,...  
 ```json
 {  
-    "email": "admin@example.com",  //Below is the admin account  
-    "password": "testpassword"      //I have created in the database  
+    "email": "admin@beispiel.de",  //Below is the admin account  
+    "password": "admin"      //I have created in the database  
 }  
 ```
 response  

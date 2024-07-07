@@ -380,8 +380,8 @@ COPY public.kurs (id, name, wochentag, starttime, endtime, mitarbeiter_id, raum_
 COPY public.mitarbeiter (id, name, email, geburtsdatum, rolle, kursanzahl, sonderkursanzahl, password_hash) FROM stdin;
 1	Max Mustermann	admin@beispiel.de	1988-05-12	Admin	0	0	$2b$10$dzrG8v090ww3CnRxV5nT7e.RCDk1WeUP.Vwuu9btWMZYP59sUykXq
 2	Anna Schmidt	anna.schmidt@beispiel.de	1992-09-28	Marketing	0	0	
-4	Peter Mueller	peter.mueller@beispiel.de	1975-02-03	Dozent	3	0	
 3	Thanh Khong	thanh.khong@beispiel.de	1997-09-28	Dozent	3	1	
+4	Peter Mueller	peter.mueller@beispiel.de	1975-02-03	Dozent	3	0	
 \.
 
 
@@ -420,6 +420,14 @@ COPY public.sonderveranstaltung (id, name, starttime, endtime, beschreibung, mit
 
 COPY public.student (id, name, email, geburtsdatum, fachbereich_id) FROM stdin;
 1	Lian Tritten	lian.tritten@example.com	2000-09-24	1
+2	Sophie Mueller	sophie.mueller@example.de	2002-03-15	1
+3	Max Schmidt	max.schmidt@example.de	2001-11-28	3
+4	Anna Weber	anna.weber@example.de	2003-07-09	2
+5	Lukas Fischer	lukas.fischer@example.de	2000-09-22	3
+6	Lena Wagner	lena.wagner@example.de	2002-05-12	1
+7	Leon Hoffmann	leon.hoffmann@example.de	2001-01-30	2
+8	Laura Meier	laura.meier@example.de	2003-04-18	3
+9	Jonas Schulz	jonas.schulz@example.de	2000-12-05	2
 \.
 
 
@@ -475,14 +483,14 @@ SELECT pg_catalog.setval('public.raum_id_seq', 12, true);
 -- Name: sonderveranstaltung_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sonderveranstaltung_id_seq', 1, true);
+SELECT pg_catalog.setval('public.sonderveranstaltung_id_seq', 2, true);
 
 
 --
 -- Name: student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.student_id_seq', 1, true);
+SELECT pg_catalog.setval('public.student_id_seq', 9, true);
 
 
 --
