@@ -428,6 +428,7 @@ COPY public.student (id, name, email, geburtsdatum, fachbereich_id) FROM stdin;
 --
 
 COPY public.student_sonderveranstaltung (student_id, sonderveranstaltung_id) FROM stdin;
+1	1
 \.
 
 

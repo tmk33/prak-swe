@@ -164,6 +164,9 @@ create new Fachbereich with key "name"
 ### GET     /sonderveranstaltung    
 get all Sonderveranstaltung  
 
+### GET     /sonderveranstaltung/student/:id   
+get all student that registered to sonderveranstaltung id
+
 ### POST    /sonderveranstaltung    
 create new Sonderveranstaltung  
 ```json
@@ -173,6 +176,15 @@ create new Sonderveranstaltung
     "wochentag": "tue",  
     "beschreibung":"Einfuehrung in die Programmiersprache Python",  
     "dauertStunden":"4"  
+}  
+```
+
+### POST    /sonderveranstaltung/add/student    
+add student to sonderveranstaltung 
+```json
+{  
+    "student_id": 1,  
+    "sonderveranstaltung_id": 1
 }  
 ```
 
