@@ -10,6 +10,7 @@ module.exports = (pool) => {
   router.get('/student/:id', sonderveranstaltungController.getStudentBySonderveranstaltung(pool));
   router.post('/', authenticateAdmin.authenticateAdmin, sonderveranstaltungController.addSonderveranstaltung(pool));
   router.post('/add/student', authenticateAdmin.authenticateAdmin, sonderveranstaltungController.addStudent(pool));
+  router.delete('/:id/', authenticateAdmin.authenticateAdmin, sonderveranstaltungController.deleteSonderveranstaltung(pool));
 
 
   return router;

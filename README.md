@@ -188,6 +188,9 @@ add student to sonderveranstaltung
 }  
 ```
 
+### DELETE  /sonderveranstaltung/:id
+delete Sonderveranstaltung by id
+
 ### POST    /krankmeldung   
 krankmeldung  
 ```json

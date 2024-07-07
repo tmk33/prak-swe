@@ -72,3 +72,44 @@ exports.getStudentBySonderveranstaltung = (pool) => async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching students' });
   }
 };
+
+exports.deleteSonderveranstaltung = (pool) => async (req, res) => {
+    const sonderveranstaltungId = req.params.id;
+
+  try {
+    // Bắt đầu một transaction để đảm bảo tính toàn vẹn dữ liệu
+    await pool.query('BEGIN');
+
+    // Lấy thông tin giảng viên của sự kiện trước khi xóa
+    const getDozentQuery = `
+      SELECT mitarbeiter_id
+      FROM sonderveranstaltung
+      WHERE id = $1
+    `;
+    const dozentResult = await pool.query(getDozentQuery, [sonderveranstaltungId]);
+
+    if (dozentResult.rows.length === 0) {
+      await pool.query('ROLLBACK'); // Hoàn tác transaction nếu không tìm thấy sự kiện
+      return res.status(404).json({ message: 'Sonderveranstaltung not found' });
+    }
+
+    const mitarbeiterId = dozentResult.rows[0].mitarbeiter_id;
+
+    // Xóa các bản ghi liên quan trong Student_Sonderveranstaltung
+    await pool.query('DELETE FROM Student_Sonderveranstaltung WHERE sonderveranstaltung_id = $1', [sonderveranstaltungId]);
+
+    // Xóa Sonderveranstaltung
+    await pool.query('DELETE FROM sonderveranstaltung WHERE id = $1', [sonderveranstaltungId]);
+
+    // Giảm sonderkursanzahl của giảng viên
+    await pool.query('UPDATE Mitarbeiter SET sonderkursanzahl = sonderkursanzahl - 1 WHERE id = $1', [mitarbeiterId]);
+
+    await pool.query('COMMIT'); // Kết thúc transaction thành công
+
+    res.status(200).json({ message: 'Sonderveranstaltung deleted successfully' });
+  } catch (error) {
+    await pool.query('ROLLBACK'); // Hoàn tác transaction nếu có lỗi
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while deleting the Sonderveranstaltung' });
+  }
+};
