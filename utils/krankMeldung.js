@@ -23,7 +23,7 @@ module.exports = (pool) => {
             // Gửi thông báo đến từng sinh viên (triển khai theo cách bạn muốn)
             for (const sinhVien of sinhVienRows) {
                 // ... (Gửi email, thông báo trong ứng dụng, ...)
-                console.log("Thong bao cho sinh vien " + sinhVien.email + " Kurs " + kursId + " ngay " + date + " bi huy!");
+                console.log("Notify student " + sinhVien.email + " that Kurs " + kursId + " on date " + date + " is canceled!");
             }
         }
 
@@ -72,7 +72,7 @@ module.exports = (pool) => {
             
 
             return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio: khungGioPhuHop, ngay, email: giangVienPhuHop.email} : null;
-          }
+        }
           
           
           
@@ -89,7 +89,7 @@ module.exports = (pool) => {
             );
             if (mitarbeiterRows.length === 0 || mitarbeiterRows[0].kursanzahl === 0) {
             await client.query('COMMIT'); // Không có khóa học nào để xử lý
-            return res.json({ message: 'Giảng viên không có khóa học nào cả.' });
+            return res.json({ message: 'The instructor does not have any courses.' });
             }
 
             // Tìm các khóa học của giảng viên trong ngày đã cho
@@ -107,7 +107,7 @@ module.exports = (pool) => {
                     // Cập nhật khóa học với giảng viên thay thế
                     // thông báo cho giảng viên mới biết
                     ketQuaXuLy.push({ date: date, kursId: kurs.id, status: 'thayTheGiangVien', giangVienMoi: giangVienThayThe.giangVienId }); // Lưu kết quả
-                    console.log("Thong bao cho Dozent: " + giangVienThayThe.email + " dam nhiem Kurs " + kurs.id + " ngay " + date);
+                    console.log("Notify Dozent: " + giangVienThayThe.email + "  to teach Kurs " + kurs.id + " on date " + date);
                 } else {
                     // Không tìm thấy giảng viên thay thế, hủy khóa học và thông báo cho sinh viên
                     await huyKhoaHocVaThongBaoSinhVien(client, kurs.fachbereich_id, kurs.id);
@@ -117,10 +117,10 @@ module.exports = (pool) => {
             }
 
             await client.query('COMMIT');
-            res.json({ message: 'Xu Ly Thanh Cong!', ketQua: ketQuaXuLy }); // Trả về mảng kết quả
+            res.json({ message: 'processed successfully!', ketQua: ketQuaXuLy }); // Trả về mảng kết quả
 
         } catch (err) {
-            console.error('Lỗi:', err);
+            console.error('Error:', err);
             return new Date(); // Trả về thời gian hiện tại của hệ thống nếu có lỗi
         }
     };

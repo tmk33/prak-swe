@@ -211,10 +211,10 @@ module.exports = (pool) => {
 
             await client.release();
 
-            res.json({ message: 'Tạo khóa học mới thành công!', ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong, kurID: newKursId});
+            res.json({ message: 'Kurs created successfully!', ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong, kurID: newKursId});
                     
         } catch (err) {
-            console.error('Lỗi:', err);
+            console.error('Error:', err);
             return new Date(); // Trả về thời gian hiện tại của hệ thống nếu có lỗi
         }
     };
