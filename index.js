@@ -12,6 +12,13 @@ const bcrypt = require('bcrypt');
 const app = express();
 const port = process.env.PORT || 3000;
 
+const startServer = () => {
+  const server = app.listen(3001, () => {
+    console.log(`Server listening on port 3001`);
+  });
+  return server;
+};
+
 const pool = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGHOST,
@@ -111,3 +118,5 @@ generatePasswordHash(password)
 app.listen(port, () => {
 	console.log(`Server đang chạy tại http://localhost:${port}`);
 });
+
+module.exports = { app, startServer };

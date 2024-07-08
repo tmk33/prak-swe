@@ -27,7 +27,7 @@ exports.deleteStudent = (pool) => async (req, res) => {
         const deletedStudent = await Student.delete(pool, id, name); // Gọi hàm delete trong model
 
         if (deletedStudent) {
-            res.json({ message: 'Student deleted!' });
+            res.json({ message: 'Student id ' + id + ' deleted!' });
         } else {
             res.status(404).json({ error: 'error: Student not found!' });
         }
