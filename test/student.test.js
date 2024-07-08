@@ -26,7 +26,7 @@ describe('Student Routes', () => {
       // Đăng nhập để lấy JWT token
       const loginResponse = await request(app)
           .post('/admin/login')
-          .send({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD }); 
+          .send({ email: "admin@beispiel.de", password: "admin" }); 
       token = loginResponse.body.token; 
       console.log('Token: ', token);
       await pool.query('BEGIN'); 
@@ -40,6 +40,7 @@ describe('Student Routes', () => {
 
   after(async () => {
     server.close(); 
+    console.log('Server closed');
 
     try {
       await pool.query('ROLLBACK');
@@ -49,11 +50,32 @@ describe('Student Routes', () => {
     }
   });
 
-  describe('POST /student', () => {
+  describe('POST /student without Authorization Token', () => {
+    it('should return error no token', (done) => {
+      const newStudent = {
+        name: 'New Student',
+        email: 'newstudent2@example.com',
+        geburtsdatum: '2000-01-01',
+        fachbereich_id: 1 // Điều chỉnh theo dữ liệu của bạn
+      };
+
+      request(app)
+        .post('/student')
+        .send(newStudent)
+        .expect(401) // Created
+        .then(res => {
+          expect(res.body).to.have.property('error', 'No tokens');
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  describe('POST /student with Authorization Token', () => {
     it('should add a new student', (done) => {
       const newStudent = {
         name: 'New Student',
-        email: 'newstudent@example.com',
+        email: 'newstudent2@example.com',
         geburtsdatum: '2000-01-01',
         fachbereich_id: 1 // Điều chỉnh theo dữ liệu của bạn
       };
@@ -74,6 +96,7 @@ describe('Student Routes', () => {
         .catch(done);
     });
   });
+
 
   describe('DELETE /student/:id/:name', () => {
     it('should delete a student', (done) => {
