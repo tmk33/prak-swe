@@ -116,7 +116,7 @@ generatePasswordHash(password)
 */
 
 app.listen(port, () => {
-	console.log(`Server đang chạy tại http://localhost:${port}`);
+	console.log(`Server running on http://localhost:${port}`);
 });
 
 module.exports = { app, startServer };

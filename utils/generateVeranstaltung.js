@@ -211,7 +211,7 @@ module.exports = (pool) => {
 
             await client.release();
 
-            res.json({ message: 'Kurs created successfully!', ketQua: giangVienVaKhungGioPhuHop, phong: phongTrong, kurID: newKursId});
+            res.json({ message: 'Kurs created successfully!', Result: giangVienVaKhungGioPhuHop, raum: phongTrong, kurID: newKursId});
                     
         } catch (err) {
             console.error('Error:', err);
