@@ -3,18 +3,18 @@ const moment = require('moment');
 module.exports = (pool) => {
     const getCurrentDateTime = async () => { 
         try {
-            const result = await pool.query('SELECT NOW()'); // Truy vấn thời gian hiện tại
-            return result.rows[0].now; // Trả về thời gian dưới dạng JavaScript Date object
+            const result = await pool.query('SELECT NOW()'); 
+            return result.rows[0].now; 
         } catch (err) {
-            console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
-            return new Date(); // Trả về thời gian hiện tại của hệ thống nếu có lỗi
+            console.error('Database query error:', err);
+            return new Date(); 
         }
     };
 
     const generateVeranstaltung = async (req, res) => { 
         const { name, fachbereichId } = req.body;
 
-        async function timNgayItTietNhat(client, fachbereichId) {
+        async function findWochentagWithFewestKurs(client, fachbereichId) {
             const result = await client.query(`
               SELECT mon, tue, wed, thu, fri
               FROM Wochentagfachbereich
@@ -22,7 +22,7 @@ module.exports = (pool) => {
             `, [fachbereichId]);
           
             const { mon, tue, wed, thu, fri } = result.rows[0];
-            const ngay = [
+            const days = [
               { name: 'mon', value: mon },
               { name: 'tue', value: tue },
               { name: 'wed', value: wed },
@@ -30,45 +30,45 @@ module.exports = (pool) => {
               { name: 'fri', value: fri }
             ];
           
-            // Sắp xếp mảng ngày theo số tiết tăng dần
-            ngay.sort((a, b) => a.value - b.value);
+            // // Sort days by ascending number of Kursanzahl
+            days.sort((a, b) => a.value - b.value);
           
-            return ngay; // Trả về toàn bộ mảng ngày đã sắp xếp
+            return days; // Return the entire sorted array
           }
           
-        async function timCacKhungGioPhuHop(client, fachbereichId, ngay) {
+        async function findAllAvailableTimeBlocks(client, fachbereichId, tag) {
             const result = await client.query(`
               SELECT startTime, endTime
               FROM Kurs
               WHERE fachbereich_id = $1 AND wochentag = $2
-            `, [fachbereichId, ngay]);
+            `, [fachbereichId, tag]);
           
-            const khungGioDaCo = result.rows;
+            const existingTimeBlocks = result.rows;
             const blocks = [];
           
-            // Khởi tạo mảng blocks với các block thời gian từ 8h đến 18h
+            // Initialize the blocks array with time blocks from 8h to 18h
             for (let i = 8; i < 18; i += 2) {
               blocks.push({ startTime: `${i}:00`, endTime: `${i + 2}:00`, available: true });
             }
           
-            // Đánh dấu các block đã bị chiếm dụng
-            for (const khungGio of khungGioDaCo) {
-              const startBlockIndex = Math.floor(moment(khungGio.starttime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ bắt đầu thành chỉ số block
-              const endBlockIndex = Math.floor(moment(khungGio.endtime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ kết thúc thành chỉ số block
+            // Mark used blocks
+            for (const timeBlock of existingTimeBlocks) {
+              const startBlockIndex = Math.floor(moment(timeBlock.starttime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ bắt đầu thành chỉ số block
+              const endBlockIndex = Math.floor(moment(timeBlock.endtime, 'HH:mm').hour() / 2) - 4; // Chuyển đổi giờ kết thúc thành chỉ số block
           
               for (let i = startBlockIndex; i < endBlockIndex; i++) {
-                blocks[i].available = false; // Đánh dấu block là không khả dụng
+                blocks[i].available = false; // Mark block as unavailable
               }
             }
           
-            // Lọc ra các block còn trống
-            const khungGioPhuHop = blocks.filter(block => block.available);
+            // Filter out available empty blocks
+            const availableTimeBlocks = blocks.filter(block => block.available);
           
-            return khungGioPhuHop;
+            return availableTimeBlocks;
         }
           
-        async function timGiangVienVaKhungGioPhuHop(client, khungGioPhuHop, ngay) {
-            let giangVienPhuHop = null;
+        async function findSuitableDozentAndExactTimeBlock(client, availableTimeBlocks, tag) {
+            let suitableDozent = null;
             let minKursanzahl = 0;
             let maxKursanzahl = await client.query(`
                 SELECT MAX(kursanzahl)
@@ -76,13 +76,12 @@ module.exports = (pool) => {
                 WHERE rolle = 'Dozent'
             `);
         
-            maxKursanzahl = maxKursanzahl.rows[0].max; // Lấy giá trị maxKursanzahl
-            let khungGioIndex = 0; // Khởi tạo chỉ số khung giờ
-            let khungGio = khungGioPhuHop[khungGioIndex]; // Lấy khung giờ đầu tiên
-        
-            while (!giangVienPhuHop && minKursanzahl <= maxKursanzahl + 1 && khungGioIndex < khungGioPhuHop.length) { 
-                // Duyệt qua các khung giờ
-                khungGio = khungGioPhuHop[khungGioIndex];
+            maxKursanzahl = maxKursanzahl.rows[0].max; // Get the maxKursanzahl value
+            let timeBlockIndex = 0; // Initialize the time block index
+            let timeBlock = availableTimeBlocks[timeBlockIndex]; // Get the first time block
+            while (!suitableDozent && minKursanzahl <= maxKursanzahl + 1 && timeBlockIndex < availableTimeBlocks.length) { 
+                
+                timeBlock = availableTimeBlocks[timeBlockIndex];
                 
                 const result = await client.query(`
                     SELECT id, kursanzahl
@@ -90,8 +89,8 @@ module.exports = (pool) => {
                     WHERE rolle = 'Dozent' AND kursanzahl = $1
                 `, [minKursanzahl]);
         
-                for (const giangVien of result.rows) {
-                    const giangVienId = giangVien.id;
+                for (const dozent of result.rows) {
+                    const dozentId = dozent.id;
                     const conflict = await client.query(`
                         SELECT 1
                         FROM Kurs
@@ -101,32 +100,31 @@ module.exports = (pool) => {
                                 (startTime < $3 AND endTime >= $3) OR
                                 (startTime >= $2 AND endTime <= $3)
                             )
-                    `, [giangVienId, khungGio.startTime, khungGio.endTime, ngay]); // Sử dụng khungGio hiện tại
+                    `, [dozentId, timeBlock.startTime, timeBlock.endTime, tag]); // Use the current timeBlock
         
                     if (!conflict.rows.length) {
-                        giangVienPhuHop = giangVien;
+                        suitableDozent = dozent;
                         break;
                     }
                 }
         
-                if (!giangVienPhuHop) {
+                if (!suitableDozent) {
                     if (minKursanzahl >= maxKursanzahl + 1) {
-                        // Nếu đã duyệt hết tất cả các giảng viên với kursanzahl nhỏ hơn maxKursanzahl + 1 mà không tìm thấy
-                        // thì chuyển sang khung giờ tiếp theo
-                        minKursanzahl = 0; // Reset lại minKursanzahl cho khung giờ mới
-                        khungGioIndex++; // Chuyển sang khung giờ tiếp theo
+                        // If searched all Dozent with kursanzahl less than maxKursanzahl + 1 and cannot find one
+                        // then move to the next time block
+                        minKursanzahl = 0; // Reset minKursanzahl for the new time block
+                        timeBlockIndex++; // Move to the next time block
                     } else {
                         minKursanzahl++;
                     }
                 }
             }
         
-            //return giangVienPhuHop?.id;
-            //return khungGio;
-            return giangVienPhuHop ? { giangVienId: giangVienPhuHop.id, khungGio, ngay } : null;
+            
+            return suitableDozent ? { dozentId: suitableDozent.id, timeBlock, tag } : null;
         }
         
-        async function timPhongTrong(client, khungGioPhuHop, ngay) {
+        async function findAvailableRaum(client, availableTimeBlocks, tag) {
             const result = await client.query(`
               SELECT id
               FROM Raum
@@ -140,43 +138,43 @@ module.exports = (pool) => {
                 )
               )
               LIMIT 1
-            `, [khungGioPhuHop.startTime, khungGioPhuHop.endTime, ngay]);
+            `, [availableTimeBlocks.startTime, availableTimeBlocks.endTime, tag]);
           
             return result.rows[0]?.id;
         }
           
-        async function luuKhoaHocMoiVaoDatabase(client, name, ngay, khungGio, giangVienId, phongId, fachbereichId) {
+        async function saveNewKursToDatabase(client, name, tag, timeBlock, dozentId, raumId, fachbereichId) {
             try {
-              await client.query('BEGIN'); // Bắt đầu transaction
+              await client.query('BEGIN'); 
           
               const result = await client.query(`
                 INSERT INTO Kurs (name, wochentag, startTime, endTime, mitarbeiter_id, raum_id, fachbereich_id)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id
-              `, [name, ngay, khungGio.startTime, khungGio.endTime, giangVienId, phongId, fachbereichId]);
+              `, [name, tag, timeBlock.startTime, timeBlock.endTime, dozentId, raumId, fachbereichId]);
           
               const newKursId = result.rows[0].id;
           
-              // Cập nhật kursanzahl của giảng viên
+              // Updated Dozent's kursanzahl
               await client.query(`
                 UPDATE Mitarbeiter
                 SET kursanzahl = kursanzahl + 1
                 WHERE id = $1
-              `, [giangVienId]);
+              `, [dozentId]);
           
-              // Cập nhật số tiết trong Wochentagfachbereich
+              // Update the number of kursanzahl in Wochentagfachbereich table
               await client.query(`
                 UPDATE wochentagfachbereich
-                SET ${ngay} = ${ngay} + 1
+                SET ${tag} = ${tag} + 1
                 WHERE fachbereich_id = $1
               `, [fachbereichId]);
           
-              await client.query('COMMIT'); // Kết thúc transaction thành công
+              await client.query('COMMIT'); 
           
               return newKursId;
             } catch (error) {
-              await client.query('ROLLBACK'); // Hoàn tác transaction nếu có lỗi
-              throw error; // Ném lỗi để xử lý ở bên ngoài
+              await client.query('ROLLBACK'); 
+              throw error; 
             }
           }
           
@@ -184,38 +182,38 @@ module.exports = (pool) => {
 
         try {
             const client = await pool.connect();
-            const ngay = await timNgayItTietNhat(client, fachbereichId);
-            let cacKhungGioPhuHop = [];
-            let ngayChon = null;
-            let giangVienVaKhungGioPhuHop = null;
-            let phongTrong = null;
-            let ngayIndex = 0; // Khởi tạo chỉ số ngày
+            const tag = await findWochentagWithFewestKurs(client, fachbereichId);
+            let availableTimeBlocks  = [];
+            let chosenDay = null;
+            let suitableDozentAndExactTimeBlock = null;
+            let availableRaum = null;
+            let tagIndex = 0; // Initialize the tag index
             
-            while (!giangVienVaKhungGioPhuHop && ngayIndex < ngay.length) {
-                // Duyệt qua các ngày theo thứ tự số tiết tăng dần
-                ngayChon = ngay[ngayIndex].name;
-                cacKhungGioPhuHop = await timCacKhungGioPhuHop(client, fachbereichId, ngayChon);
+            while (!suitableDozentAndExactTimeBlock && tagIndex < tag.length) {
+                // Browse the days in ascending order of Kursanzahl
+                chosenDay = tag[tagIndex].name;
+                availableTimeBlocks  = await findAllAvailableTimeBlocks(client, fachbereichId, chosenDay);
 
-                if (cacKhungGioPhuHop.length > 0) {
-                    // Tìm giảng viên và phòng phù hợp cho ngày này
-                    giangVienVaKhungGioPhuHop = await timGiangVienVaKhungGioPhuHop(client, cacKhungGioPhuHop, ngayChon);
-                    if (giangVienVaKhungGioPhuHop) {
-                        phongTrong = await timPhongTrong(client, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.ngay);
-                        break; // Thoát vòng lặp khi tìm thấy khung giờ, giảng viên và phòng phù hợp
+                if (availableTimeBlocks .length > 0) {
+                    // Find the exact suitable Dozent, timeBlock and Raum for the current day
+                    suitableDozentAndExactTimeBlock = await findSuitableDozentAndExactTimeBlock(client, availableTimeBlocks , chosenDay);
+                    if (suitableDozentAndExactTimeBlock) {
+                        availableRaum = await findAvailableRaum(client, suitableDozentAndExactTimeBlock.timeBlock, suitableDozentAndExactTimeBlock.tag);
+                        break; // Exit the loop when a exact suitable Dozent, timeBlock and Raum are found
                     }
                 }
-                ngayIndex++;
+                tagIndex++;
             }
-                // Bước 5: Tạo khóa học mới
-            const newKursId = await luuKhoaHocMoiVaoDatabase(client, name, ngayChon, giangVienVaKhungGioPhuHop.khungGio, giangVienVaKhungGioPhuHop.giangVienId, phongTrong, fachbereichId);
+                // save new Kurs to database
+            const newKursId = await saveNewKursToDatabase(client, name, chosenDay, suitableDozentAndExactTimeBlock.timeBlock, suitableDozentAndExactTimeBlock.dozentId, availableRaum, fachbereichId);
 
             await client.release();
 
-            res.json({ message: 'Kurs created successfully!', Result: giangVienVaKhungGioPhuHop, raum: phongTrong, kurID: newKursId});
+            res.json({ message: 'Kurs created successfully!', Result: suitableDozentAndExactTimeBlock, raum: availableRaum, kurID: newKursId});
                     
         } catch (err) {
             console.error('Error:', err);
-            return new Date(); // Trả về thời gian hiện tại của hệ thống nếu có lỗi
+            return new Date();
         }
     };
 

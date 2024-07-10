@@ -31,18 +31,16 @@ const generateVeranstaltung = require('./utils/generateVeranstaltung')(pool); //
 const krankMeldung = require('./utils/krankMeldung')(pool); // Truyền pool vào module
 
 
-// Sử dụng middleware để phân tích JSON
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3001', // Cho phép yêu cầu từ frontend
+  origin: 'http://localhost:3001', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true // Cho phép gửi cookie và thông tin xác thực
+  credentials: true 
 }));
 
-// Import và sử dụng các routes
 const studentRoutes = require('./routes/studentRoutes');
-app.use('/student', studentRoutes(pool)); // Truyền pool vào routes
+app.use('/student', studentRoutes(pool)); 
 
 const mitarbeiterRoutes = require('./routes/mitarbeiterRoutes');
 app.use('/mitarbeiter', mitarbeiterRoutes(pool));
@@ -86,7 +84,7 @@ app.post('/admin/login', async (req, res) => {
     }
   });
 
-app.put('/admin/:id/password', authenticateAdmin.authenticateAdmin, async (req, res) => { // Chỉ admin mới được phép đổi mật khẩu
+app.put('/admin/:id/password', authenticateAdmin.authenticateAdmin, async (req, res) => { 
     const { id } = req.params;
     const { newPassword } = req.body;
   
