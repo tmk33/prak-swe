@@ -196,7 +196,7 @@ krankmeldung
 ```json
 {  
     "mitarbeiterId": 5,  
-    "ngay": "wed",  
+    "wochentag": "wed",  
     "date":"12-02-2024"  
 }  
 ```
