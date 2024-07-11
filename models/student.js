@@ -5,10 +5,10 @@ class Student {
     }
   
     static async add(pool, studentData) {
-        const { name, email, geburtsdatum, fachbereich_id } = studentData;
+        const { name, email, geburtsdatum, fachbereich_id, semester } = studentData;
         const result = await pool.query(
-      'INSERT INTO student (name, email, geburtsdatum, fachbereich_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, email, geburtsdatum, fachbereich_id]
+      'INSERT INTO student (name, email, geburtsdatum, fachbereich_id, semester) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, email, geburtsdatum, fachbereich_id, semester]
     );
         return result.rows[0];
     }
@@ -41,6 +41,10 @@ class Student {
         if (studentData.fachbereich_id) {
           updates.push('fachbereich_id = $' + (updates.length + 1));
           values.push(studentData.fachbereich_id);
+        }
+        if (studentData.semester) {
+          updates.push('semester = $' + (updates.length + 1));
+          values.push(studentData.semester);
         }
     
         // Nếu không có trường nào được cập nhật, trả về null

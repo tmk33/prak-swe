@@ -81,7 +81,8 @@ Create a new student
     "name": "Lian Tritten",
     "email": "test1@example.com",
     "geburtsdatum": "2000-09-24",
-    "fachbereich_id": 1
+    "fachbereich_id": 1,
+    "semester":2
 }
 ```
 
@@ -95,7 +96,8 @@ update existing Student data (which value set null is unchange)
     "name": null,     //name unchange  
     "email": null,    //email unchange  
     "geburtsdatum": null,     //geburtsdatum unchange  
-    "fachbereich_id": 2       //fachbereich_id change to 2  
+    "fachbereich_id": 2,       //fachbereich_id change to 2  
+    "semester":null
 }
 ```
   
