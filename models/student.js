@@ -18,14 +18,14 @@ class Student {
           'DELETE FROM student WHERE id = $1 AND name = $2 RETURNING *',
           [id, name]
         );
-        return result.rows[0]; // Trả về thông tin sinh viên đã xóa (hoặc null nếu không tìm thấy)
+        return result.rows[0]; // Returns deleted student information (or null if not found)
     }
 
     static async update(pool, id, studentData) {
         const updates = [];
         const values = [];
     
-        // Xây dựng mảng updates và values dựa trên các trường có giá trị mới
+        // Build the updates and values ​​array based on the fields with new values
         if (studentData.name) {
           updates.push('name = $' + (updates.length + 1));
           values.push(studentData.name);
@@ -47,12 +47,12 @@ class Student {
           values.push(studentData.semester);
         }
     
-        // Nếu không có trường nào được cập nhật, trả về null
+        // If no fields are updated, null is returned
         if (updates.length === 0) {
           return null;
         }
     
-        values.push(id); // Thêm id vào cuối mảng values
+        values.push(id); // Add id to the end of the values ​​array
     
         const query = `UPDATE student SET ${updates.join(', ')} WHERE id = $${updates.length + 1} RETURNING *`;
     

@@ -10,11 +10,10 @@ exports.getAllFachbereich = (pool) => async (req, res) => {
 };
 
 exports.addFachbereich = (pool) => async (req, res) => {
-  // ... (Thêm logic xử lý cho việc thêm sinh viên)
   try {
-    const { name } = req.body; // Lấy dữ liệu từ body request
+    const { name } = req.body; 
     const newFachbereich = await Fachbereich.add(pool, { name });
-    res.status(201).json(newFachbereich); // Trả về thông tin sinh viên mới với mã 201 Created
+    res.status(201).json(newFachbereich); 
     } catch (err) {
     res.status(500).json({ error: err.message });
     }

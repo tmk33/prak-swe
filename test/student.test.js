@@ -1,6 +1,6 @@
 // test/student.routes.test.js
 const request = require('supertest');
-const { app, startServer } = require('../index');  // Import ứng dụng Express
+const { app, startServer } = require('../index');  
 const { Pool } = require('pg'); 
 require('dotenv').config();
 const chai = require('chai');
@@ -23,7 +23,7 @@ describe('Student Routes', () => {
     server = startServer();
 
     try {
-      // Đăng nhập để lấy JWT token
+      // Log in to get JWT tokens
       const loginResponse = await request(app)
           .post('/admin/login')
           .send({ email: "admin@beispiel.de", password: "admin" }); 
@@ -56,7 +56,7 @@ describe('Student Routes', () => {
         name: 'New Student',
         email: 'newstudent2@example.com',
         geburtsdatum: '2000-01-01',
-        fachbereich_id: 1 // Điều chỉnh theo dữ liệu của bạn
+        fachbereich_id: 1 
       };
 
       request(app)
@@ -77,7 +77,7 @@ describe('Student Routes', () => {
         name: 'New Student',
         email: 'newstudent2@example.com',
         geburtsdatum: '2000-01-01',
-        fachbereich_id: 1 // Điều chỉnh theo dữ liệu của bạn
+        fachbereich_id: 1 
       };
 
       request(app)
@@ -86,7 +86,7 @@ describe('Student Routes', () => {
         .send(newStudent)
         .expect(201) // Created
         .then(res => {
-          testStudent = res.body; // Lưu thông tin sinh viên mới để sử dụng trong test DELETE
+          testStudent = res.body; // Save new student information for use in DELETE testing
           expect(res.body).to.have.property('id');
           expect(res.body.name).to.equal(newStudent.name);
           expect(res.body.email).to.equal(newStudent.email);

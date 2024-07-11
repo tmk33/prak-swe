@@ -2,10 +2,10 @@
 
 const jwt = require('jsonwebtoken');
 
-const jwtSecret = process.env.JWT_SECRET; // Lấy secret key từ biến môi trường
+const jwtSecret = process.env.JWT_SECRET; 
 
 function authenticateAdmin(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1]; // Lấy token từ header
+    const token = req.headers.authorization?.split(' ')[1]; // Get token from header
     
     if (!token) {
       return res.status(401).json({ error: 'No tokens' });
@@ -14,7 +14,7 @@ function authenticateAdmin(req, res, next) {
     try {
       const decoded = jwt.verify(token, jwtSecret);
       if (decoded.rolle === 'Admin') {
-        req.mitarbeiter = decoded; // Lưu thông tin nhân viên vào req
+        req.mitarbeiter = decoded; // Save Admin information in req
         next();
       } else {
         return res.status(403).json({ error: 'Unauthorized' });

@@ -11,9 +11,9 @@ exports.getAllStudents = (pool) => async (req, res) => {
 
 exports.addStudent = (pool) => async (req, res) => {
     try {
-        const { name, email, geburtsdatum, fachbereich_id, semester } = req.body; // Lấy dữ liệu từ body request
+        const { name, email, geburtsdatum, fachbereich_id, semester } = req.body;
         const newStudent = await Student.add(pool, { name, email, geburtsdatum, fachbereich_id, semester });
-        res.status(201).json(newStudent); // Trả về thông tin sinh viên mới với mã 201 Created
+        res.status(201).json(newStudent); 
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -24,7 +24,7 @@ exports.deleteStudent = (pool) => async (req, res) => {
         const id = parseInt(req.params.id);
         const name = req.params.name;
 
-        const deletedStudent = await Student.delete(pool, id, name); // Gọi hàm delete trong model
+        const deletedStudent = await Student.delete(pool, id, name); 
 
         if (deletedStudent) {
             res.json({ message: 'Student id ' + id + ' deleted!' });

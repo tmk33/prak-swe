@@ -5,7 +5,6 @@ class Fachbereich {
     }
   
     static async add(pool, fachbereichData) {
-      // Thêm logic để chèn dữ liệu studentData vào bảng students
       const { name } = fachbereichData;
       const result = await pool.query(
     'INSERT INTO fachbereich (name) VALUES ($1) RETURNING *',

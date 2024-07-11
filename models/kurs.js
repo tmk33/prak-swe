@@ -50,9 +50,9 @@ class Kurs {
             k.wochentag,
             k.startTime,
             k.endTime,
-            m.name AS mitarbeiter_name, -- Lấy tên Mitarbeiter
-            r.name AS raum_name,        -- Lấy tên Raum
-            f.name AS fachbereich_name   -- Lấy tên Fachbereich
+            m.name AS mitarbeiter_name, 
+            r.name AS raum_name,        
+            f.name AS fachbereich_name   
         FROM 
             Kurs k
         JOIN 
@@ -74,9 +74,9 @@ class Kurs {
                 k.wochentag,
                 k.startTime,
                 k.endTime,
-                m.name AS mitarbeiter_name, -- Lấy tên Mitarbeiter
-                r.name AS raum_name,        -- Lấy tên Raum
-                f.name AS fachbereich_name   -- Lấy tên Fachbereich
+                m.name AS mitarbeiter_name, 
+                r.name AS raum_name,        
+                f.name AS fachbereich_name   
             FROM 
                 Kurs k
             JOIN 
@@ -88,7 +88,7 @@ class Kurs {
 
             WHERE m.name ILIKE $1;
             `,
-            [`%${mitarbeiterName}%`] // Sử dụng ILIKE cho phép tìm kiếm không phân biệt chữ hoa/thường
+            [`%${mitarbeiterName}%`] // Using ILIKE allows case-insensitive searching
           );
         return result.rows;
     }

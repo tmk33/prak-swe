@@ -14,7 +14,7 @@ class Sonderveranstaltung {
     const { name, date, wochentag, beschreibung, dauertStunden } = sonderveranstaltungData;
 
     try {
-        // Bước 1: tìm các sự kiện cùng ngày
+        // Step 1: find Sonderveranstaltung on the same day
         const existingEvents = await pool.query(`
             SELECT *
             FROM Sonderveranstaltung
@@ -24,29 +24,29 @@ class Sonderveranstaltung {
 
         const availableTimeSlot = await this.findAvailableTimeSlot(existingEvents.rows, dauertStunden);
 
-        // Bước 2: Tìm giảng viên phù hợp
+        // Step 2: Find a suitable Dozent
         const suitableDozent = await this.findSuitableDozent(pool, wochentag, availableTimeSlot);
 
-        // Bước 3: Tìm phòng học trống
+        // Step 3: Find an empty Raum
         const availableRaum = await this.findAvailableRaum(pool, wochentag, availableTimeSlot);
 
-        // Nếu không tìm thấy giảng viên hoặc phòng học phù hợp, báo lỗi
+        // If a suitable Dozent or Raum cannot be found, report an error
         if (!suitableDozent || !availableRaum) {
           return {Information: 'No suitable Dozent or Raum found'};
         }
 
-        const formattedDate = moment(date, 'DD.MM.YYYY').format('YYYY-MM-DD'); // Chuyển đổi date sang định dạng YYYY-MM-DD
+        const formattedDate = moment(date, 'DD.MM.YYYY').format('YYYY-MM-DD'); // format change
         const startTimeStamp = moment(`${formattedDate} ${availableTimeSlot.starttime}`, 'YYYY-MM-DD HH:mm:ss').format();
         const endTimeStamp = moment(`${formattedDate} ${availableTimeSlot.endtime}`, 'YYYY-MM-DD HH:mm:ss').format();
 
 
-        // Tạo sự kiện mới
+        // create new Sonderveranstaltung
         const result = await pool.query(
             'INSERT INTO sonderveranstaltung (name, starttime, endtime, beschreibung, mitarbeiter_id, raum_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [name, startTimeStamp, endTimeStamp, beschreibung, suitableDozent.id, availableRaum.id]
         );
 
-        // Tăng sonderkursanzahl của giảng viên
+        // Increase the Dozent's sonderkursanzahl
         await pool.query(
             'UPDATE Mitarbeiter SET sonderkursanzahl = sonderkursanzahl + 1 WHERE id = $1',
             [suitableDozent.id]
@@ -55,29 +55,29 @@ class Sonderveranstaltung {
         return result.rows[0];
 
       } catch (error) {
-        console.error(error); // In ra thông tin lỗi
+        console.error(error); 
         throw error; 
       }
   }
 
-  // Hàm tìm ngày có ít tiết Sonderveranstaltung nhất
+ 
   static async findAvailableTimeSlot(existingEvents, dauertStunden) {
-    const maxEndTime = moment('18:00:00', 'HH:mm:ss'); // Giờ kết thúc tối đa là 18h
+    const maxEndTime = moment('18:00:00', 'HH:mm:ss'); 
 
     if (existingEvents.length === 0) {
-      // Nếu chưa có sự kiện nào, bắt đầu lúc 8 giờ
+      // If there is no Sonderveranstaltung yet, start at 8 o'clock
       return { 
         starttime: moment('08:00:00', 'HH:mm:ss').format('HH:mm:ss'), 
         endtime: moment('08:00:00', 'HH:mm:ss').add(dauertStunden, 'hours').format('HH:mm:ss') 
       };
     } else {
-      // Sắp xếp các sự kiện hiện có theo thời gian bắt đầu
+      // Sort existing Sonderveranstaltung by starttime
       existingEvents.sort((a, b) => a.starttime - b.starttime);
 
-      // Lấy thời gian kết thúc của sự kiện cuối cùng
+      // Get the endtime of the last Sonderveranstaltung
       const lastEventEndTime = moment(existingEvents[existingEvents.length - 1].endtime, 'HH:mm:ss');
 
-      // Kiểm tra xem có đủ thời gian sau sự kiện cuối cùng không
+      // Check if there is enough time after the last Sonderveranstaltung
       const potentialEndTime = lastEventEndTime.clone().add(dauertStunden, 'hours');
       if (potentialEndTime.format('HH:mm:ss') <= maxEndTime.format('HH:mm:ss')) {
         return { 
@@ -85,15 +85,15 @@ class Sonderveranstaltung {
           endtime: potentialEndTime.format('HH:mm:ss') 
         };
       } else {
-        // Không đủ thời gian, trả về null
+        // Not enough time, returns null
         return null;
       }
     }
   }
-  // Hàm tìm giảng viên phù hợp (đơn giản hóa)
+
   static async findSuitableDozent(pool, wochentag, availableTimeSlot) {
     try {
-      const { starttime, endtime } = availableTimeSlot; // Lấy thời gian bắt đầu và kết thúc
+      const { starttime, endtime } = availableTimeSlot; 
 
       const query = `
         SELECT m.*
@@ -114,17 +114,15 @@ class Sonderveranstaltung {
       `;
 
       const result = await pool.query(query, [wochentag, starttime, endtime]);
-      return result.rows[0] || null; // Trả về giảng viên đầu tiên tìm thấy hoặc null
+      return result.rows[0] || null; // Returns the first Dozent found or null
     } catch (err) {
       throw err;
     }
   }
   
-  // Hàm tìm phòng học trống
-  // Hàm tìm phòng học trống (đơn giản hóa)
   static async findAvailableRaum(pool, wochentag, availableTimeSlot) {
     try {
-      const { starttime, endtime } = availableTimeSlot; // Lấy thời gian bắt đầu và kết thúc
+      const { starttime, endtime } = availableTimeSlot; 
 
       const query = `
         SELECT r.*
@@ -143,7 +141,7 @@ class Sonderveranstaltung {
       `;
 
       const result = await pool.query(query, [wochentag, starttime, endtime]);
-      return result.rows[0] || null; // Trả về phòng học đầu tiên tìm thấy hoặc null
+      return result.rows[0] || null; // Returns the first Raum found or null
     } catch (err) {
       throw err;
     }
