@@ -160,7 +160,7 @@ get all Fachbereich
 create new Fachbereich with key "name"  
 ```json
 {  
-    "name": "new Fachbereich",  
+    "name": "Informatik2", //Informatik 2. Semester  
 }  
 ```
 ### GET     /sonderveranstaltung    
