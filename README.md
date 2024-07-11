@@ -130,7 +130,7 @@ create new Raum with key "name", "ort"
 ### GET     /kurs    
 get all Kurs  
 
-### GET     /kurs/:fachbereich_id 
+### GET     /kurs/fachbereich/:fachbereich_id 
 get Kurs by Fachbereich  
 
 ### GET     /kurs/dozent/id/:mitarbeiter_id     
