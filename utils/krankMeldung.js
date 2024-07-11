@@ -19,12 +19,20 @@ module.exports = (pool) => {
                 'SELECT id, name, email FROM student WHERE fachbereich_id = $1',
                 [fachbereichId]
             );
+            const notificationResults = [];
 
             // Send notifications to each student
             for (const student of studentRows ) {
                 // send per Email...
                 console.log("Notify student " + student.email + " that Kurs " + kursId + " on date " + date + " is canceled!");
+                const message = `Notify student ${student.email} that Kurs ${kursId} on date ${date} is canceled!`;
+                notificationResults.push({
+                    studentId: student.id,
+                    email: student.email,
+                    notification: message,
+                });
             }
+            return notificationResults;
         }
 
         async function findSuitableDozent(client, timeBlock, wochentag) {
@@ -82,6 +90,8 @@ module.exports = (pool) => {
             await client.query('BEGIN'); 
 
             const processingResults = [];
+            const messageToStudent = [];
+            const messageToDozent = [];
             // check Dozent's kursanzahl
             const { rows: mitarbeiterRows } = await client.query(
             'SELECT kursanzahl FROM Mitarbeiter WHERE id = $1',
@@ -108,16 +118,23 @@ module.exports = (pool) => {
                     // Notify the new Dozent
                     processingResults.push({ date: date, kursId: kurs.id, status: 'dozentReplaced', newDozent: substituteDozent.dozentId });
                     console.log("Notify Dozent: " + substituteDozent.email + "  to teach Kurs " + kurs.id + " on date " + date);
+                    const message = `Notify Dozent: ${substituteDozent.email} to teach Kurs ${kurs.id} on date ${date}`;
+                    messageToDozent.push({
+                        dozentId: substituteDozent.dozentId,
+                        email: substituteDozent.email,
+                        notification: message,
+                    });
                 } else {
                     // No substitute found, cancel the Kurs and notify students
-                    await cancelKursAndNotifyStudents(client, kurs.fachbereich_id, kurs.id);
+                    result = await cancelKursAndNotifyStudents(client, kurs.fachbereich_id, kurs.id);
+                    messageToStudent.push(result);
                     processingResults.push({ date: date, kursId: kurs.id, status: 'kursCanceled' }); 
 
                 }
             }
 
             await client.query('COMMIT');
-            res.json({ message: 'processed successfully!', result: processingResults }); 
+            res.json({ message: 'processed successfully!', result: processingResults , messageToStudent: messageToStudent}); 
 
         } catch (err) {
             console.error('Error:', err);
