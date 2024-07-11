@@ -134,7 +134,7 @@ module.exports = (pool) => {
             }
 
             await client.query('COMMIT');
-            res.json({ message: 'processed successfully!', result: processingResults , messageToStudent: messageToStudent}); 
+            res.json({ message: 'processed successfully!', result: processingResults , messageToStudent: messageToStudent, messageToDozent: messageToDozent}); 
 
         } catch (err) {
             console.error('Error:', err);
