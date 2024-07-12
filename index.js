@@ -34,7 +34,7 @@ const krankMeldung = require('./utils/krankMeldung')(pool); // Truyền pool và
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3001', 
+  origin: '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true 
 }));
