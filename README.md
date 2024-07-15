@@ -104,6 +104,9 @@ update existing Student data (which value set null is unchange)
 ### GET     /mitarbeiter     
 get all Mitarbeiter  
 
+### GET     /mitarbeiter/:id    
+get Mitarbeiter by ID  
+
 ### POST    /mitarbeiter    
 create new Student  
 ```json
@@ -117,6 +120,9 @@ create new Student
   
 ### GET     /raum    
 get all Raum  
+
+### GET     /raum/:id   
+get Raum by ID  
 
 ### POST    /raum    
 create new Raum with key "name", "ort"  

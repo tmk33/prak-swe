@@ -12,6 +12,11 @@ class Raum {
     );
         return result.rows[0];
     }
+
+    static async getById(pool, id) {
+      const result = await pool.query('SELECT * FROM raum WHERE id = $1', [id]);
+      return result.rows[0]; 
+    }
   }
   
   module.exports = Raum;

@@ -18,3 +18,19 @@ exports.addMitarbeiter = (pool) => async (req, res) => {
     res.status(500).json({ error: err.message });
 }
 };
+
+exports.getMitarbeiterById = (pool) => async (req, res) => {
+  const mitarbeiterId = req.params.id; 
+
+  try {
+    const mitarbeiter = await Mitarbeiter.getById(pool, mitarbeiterId);
+    
+    if (!mitarbeiter) { // Xử lý trường hợp không tìm thấy
+      return res.status(404).json({ error: 'Mitarbeiter not found' });
+    }
+
+    res.json(mitarbeiter);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

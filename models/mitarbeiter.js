@@ -1,6 +1,6 @@
 class Mitarbeiter {
     static async getAll(pool) {
-      const result = await pool.query('SELECT * FROM mitarbeiter');
+      const result = await pool.query('SELECT id, name, email, geburtsdatum, rolle, kursanzahl, sonderkursanzahl FROM mitarbeiter');
       return result.rows;
     }
   
@@ -11,6 +11,11 @@ class Mitarbeiter {
     [name, email, geburtsdatum, rolle]
   );
       return result.rows[0];
+    }
+
+    static async getById(pool, id) {
+      const result = await pool.query('SELECT id, name, email, geburtsdatum, rolle, kursanzahl, sonderkursanzahl FROM mitarbeiter WHERE id = $1', [id]);
+      return result.rows[0]; 
     }
   }
   

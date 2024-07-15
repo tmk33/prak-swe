@@ -7,6 +7,7 @@ module.exports = (pool) => {
   const router = express.Router();
 
   router.get('/', mitarbeiterController.getAllMitarbeiter(pool));
+  router.get('/:id', mitarbeiterController.getMitarbeiterById(pool)); 
   router.post('/', authenticateAdmin.authenticateAdmin, mitarbeiterController.addMitarbeiter(pool));
 
   return router;
