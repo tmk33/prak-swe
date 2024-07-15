@@ -19,6 +19,11 @@ class Fachbereich {
       return result.rows[0];
 
     }
+
+    static async getById(pool, id) {
+      const result = await pool.query('SELECT * FROM fachbereich WHERE id = $1', [id]);
+      return result.rows[0]; 
+    }
   }
   
   module.exports = Fachbereich;

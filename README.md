@@ -162,6 +162,9 @@ add new Kurs with key "name" and "fachbereichId"
 ### GET     /fachbereich    
 get all Fachbereich  
 
+### GET     /fachbereich/:id   
+get Fachbereich by ID  
+
 ### POST    /fachbereich    
 create new Fachbereich with key "name"  
 ```json

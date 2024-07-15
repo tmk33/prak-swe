@@ -18,3 +18,20 @@ exports.addFachbereich = (pool) => async (req, res) => {
     res.status(500).json({ error: err.message });
     }
 };
+
+exports.getFachbereichById = (pool) => async (req, res) => {
+  const fachbereichId = req.params.id; 
+
+  try {
+    const fachbereich = await Fachbereich.getById(pool, fachbereichId);
+    
+    if (!fachbereich) { 
+      return res.status(404).json({ error: 'Fachbereich not found' });
+    }
+
+    res.json(fachbereich);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
