@@ -50,9 +50,9 @@ class Kurs {
             k.wochentag,
             k.startTime,
             k.endTime,
-            m.name AS mitarbeiter_name, 
-            r.name AS raum_name,        
-            f.name AS fachbereich_name   
+            m.name AS dozent, 
+            r.name AS raum,        
+            f.name AS fachbereich   
         FROM 
             Kurs k
         JOIN 
@@ -74,9 +74,9 @@ class Kurs {
                 k.wochentag,
                 k.startTime,
                 k.endTime,
-                m.name AS mitarbeiter_name, 
-                r.name AS raum_name,        
-                f.name AS fachbereich_name   
+                m.name AS dozent, 
+                r.name AS raum,        
+                f.name AS fachbereich   
             FROM 
                 Kurs k
             JOIN 
