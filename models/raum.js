@@ -17,6 +17,12 @@ class Raum {
       const result = await pool.query('SELECT * FROM raum WHERE id = $1', [id]);
       return result.rows[0]; 
     }
+
+    static async deleteById(pool, id) {
+      const query = 'DELETE FROM raum WHERE id = $1';
+      const result = await pool.query(query, [id]);
+      return result;
+    }
   }
   
   module.exports = Raum;

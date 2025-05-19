@@ -132,6 +132,10 @@ create new Raum with key "name", "ort"
     "ort": "Campus A"  
 }  
 ```
+
+### DELETE  /raum/:id
+Deletes a room by its ID. Requires admin authentication.
+Example: `DELETE http://localhost:3000/raum/123`
   
 ### GET     /kurs    
 get all Kurs  
