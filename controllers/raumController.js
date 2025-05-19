@@ -9,6 +9,22 @@ exports.getAllRaum = (pool) => async (req, res) => {
   }
 };
 
+exports.deleteRaumById = (pool) => async (req, res) => {
+  const raumId = req.params.id;
+
+  try {
+    const result = await Raum.deleteById(pool, raumId);
+
+    if (result.rowCount > 0) {
+      res.status(200).json({ message: 'Raum deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Raum not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.addRaum = (pool) => async (req, res) => {
   try {
     const { name, ort } = req.body; 

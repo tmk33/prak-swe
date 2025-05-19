@@ -9,6 +9,7 @@ module.exports = (pool) => {
   router.get('/:id', raumController.getRaumById(pool)); 
 
   router.post('/', authenticateAdmin.authenticateAdmin, raumController.addRaum(pool));
+  router.delete('/:id', authenticateAdmin.authenticateAdmin, raumController.deleteRaumById(pool));
 
   return router;
 };
